@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Animation Brawl - Level Selection Map</title>
+  <!-- Import retro pixel font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+  
+  <!-- Link external stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="flicker">
+
+  <div class="cabinet-wrapper" id="cabinet">
+    <!-- CRT monitor overlays -->
+    <div class="crt-overlay"></div>
+    <div class="crt-glass"></div>
+    <div class="crt-vignette"></div>
+
+    <!-- Screen Viewport for CSS-Transitions -->
+    <div class="cabinet-screen-viewport" id="cabinet-viewport">
+
+      <!-- ================= VIEW 1: START SCREEN ================= -->
+      <div class="game-screen" id="main-screen">
+        
+        <!-- Canvas for particle background speed & explosions -->
+        <canvas id="effect-canvas"></canvas>
+
+        <div class="fighter-silhouette fighter-left"></div>
+        <div class="fighter-silhouette fighter-right"></div>
+
+        <div class="ui-wrapper">
+          <div class="header-bar">
+            <div>HI-SCORE: 999990</div>
+            <div class="blink-fast">INSERT COIN</div>
+          </div>
+
+          <div class="title-container">
+            <h1 class="game-title">Animation<br>Brawl</h1>
+            <div class="game-subtitle">RETRO EDITION</div>
+          </div>
+
+          <div class="button-container">
+            <button class="start-btn" id="start-btn">START GAME</button>
+            <div class="press-start-text" id="start-txt">PRESS START BUTTON</div>
+          </div>
+
+          <div class="footer-bar">
+            <div>CREDIT 00</div>
+            <div>© 2026 ANTIGRAVITY GAMES</div>
+            <div>VER. 1.0.2</div>
+          </div>
+        </div>
+
+      </div>
+
+
+      <!-- ================= VIEW 2: ROAD MAP SCREEN ================= -->
+      <div class="game-screen" id="map-screen" style="display: none;">
+        
+        <!-- Header -->
+        <div class="map-header">
+          <h2 class="map-title">SELECT MISSION</h2>
+          <div class="map-currency-bar">
+            <span class="currency-item">🪙 <span id="map-coins">0000</span></span>
+            <span class="currency-item" style="margin-left: 15px;">💎 <span id="map-diamonds">000</span></span>
+          </div>
+        </div>
+
+        <!-- Main Map and Details Split -->
+        <div class="map-container">
+          
+          <!-- Left side: Map Board with road nodes -->
+          <div class="map-board" id="map-board">
+            
+            <!-- Map Grid and Coordinate Markers -->
+            <div class="map-grid-label" style="position: absolute; left: 2px; top: 20%; font-size: 5px; color: #403664; font-family: monospace; pointer-events: none; z-index: 2;">30°N</div>
+            <div class="map-grid-label" style="position: absolute; left: 2px; top: 50%; font-size: 5px; color: #403664; font-family: monospace; pointer-events: none; z-index: 2;">20°N</div>
+            <div class="map-grid-label" style="position: absolute; left: 2px; top: 80%; font-size: 5px; color: #403664; font-family: monospace; pointer-events: none; z-index: 2;">10°N</div>
+            <div class="map-grid-label" style="position: absolute; left: 20%; bottom: 2px; font-size: 5px; color: #403664; font-family: monospace; pointer-events: none; z-index: 2;">40°W</div>
+            <div class="map-grid-label" style="position: absolute; left: 50%; bottom: 2px; font-size: 5px; color: #403664; font-family: monospace; pointer-events: none; z-index: 2;">30°W</div>
+            <div class="map-grid-label" style="position: absolute; left: 80%; bottom: 2px; font-size: 5px; color: #403664; font-family: monospace; pointer-events: none; z-index: 2;">20°W</div>
+
+            <!-- Sector Cartography Labels -->
+            <div style="position: absolute; left: 3%; top: 5%; font-size: 6px; color: #5a4b9c; font-family: 'Press Start 2P', monospace; z-index: 2; pointer-events: none; letter-spacing: 0.5px;">SEC-01: WOODLAND</div>
+            <div style="position: absolute; left: 38%; top: 5%; font-size: 6px; color: #5a4b9c; font-family: 'Press Start 2P', monospace; z-index: 2; pointer-events: none; letter-spacing: 0.5px;">SEC-02: TROPICS</div>
+            <div style="position: absolute; left: 71%; top: 5%; font-size: 6px; color: #5a4b9c; font-family: 'Press Start 2P', monospace; z-index: 2; pointer-events: none; letter-spacing: 0.5px;">SEC-03: VOLCANO</div>
+
+            <!-- HTML Map Legend Overlay -->
+            <div class="map-legend">
+              <div class="legend-title">LEGEND</div>
+              <div class="legend-item"><span class="legend-symbol" style="color:#4caf50;">♣</span> FOREST</div>
+              <div class="legend-item"><span class="legend-symbol" style="color:#00ffff;">▲</span> PEAKS</div>
+              <div class="legend-item"><span class="legend-symbol" style="color:#ffd700;">≈</span> SEA</div>
+              <div class="legend-item"><span class="legend-symbol" style="color:#ff3d00;">▬</span> ROADS</div>
+            </div>
+
+            <!-- SVG Continent landmass, terrain and roads -->
+            <svg class="map-paths-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
+              <!-- Coordinate Grid Lines -->
+              <line x1="0" y1="20" x2="100" y2="20" stroke="rgba(64, 54, 100, 0.25)" stroke-width="0.3" stroke-dasharray="2,3" />
+              <line x1="0" y1="50" x2="100" y2="50" stroke="rgba(64, 54, 100, 0.25)" stroke-width="0.3" stroke-dasharray="2,3" />
+              <line x1="0" y1="80" x2="100" y2="80" stroke="rgba(64, 54, 100, 0.25)" stroke-width="0.3" stroke-dasharray="2,3" />
+              <line x1="20" y1="0" x2="20" y2="100" stroke="rgba(64, 54, 100, 0.25)" stroke-width="0.3" stroke-dasharray="2,3" />
+              <line x1="50" y1="0" x2="50" y2="100" stroke="rgba(64, 54, 100, 0.25)" stroke-width="0.3" stroke-dasharray="2,3" />
+              <line x1="80" y1="0" x2="80" y2="100" stroke="rgba(64, 54, 100, 0.25)" stroke-width="0.3" stroke-dasharray="2,3" />
+
+              <!-- Detailed Continent Shape (Glowing neon shoreline) -->
+              <path d="M 6,55 L 8,45 L 14,40 L 12,32 L 20,28 L 28,25 L 34,18 L 42,22 L 50,15 L 58,20 L 65,14 L 72,22 L 80,18 L 86,28 L 92,34 L 88,48 L 94,56 L 90,68 L 93,76 L 85,82 L 78,76 L 72,85 L 64,80 L 55,88 L 45,84 L 38,92 L 28,86 L 20,88 L 12,78 L 15,68 L 6,62 Z" 
+                    fill="#150f2e" stroke="#5c459e" stroke-width="1.2" />
+              <path d="M 6,55 L 8,45 L 14,40 L 12,32 L 20,28 L 28,25 L 34,18 L 42,22 L 50,15 L 58,20 L 65,14 L 72,22 L 80,18 L 86,28 L 92,34 L 88,48 L 94,56 L 90,68 L 93,76 L 85,82 L 78,76 L 72,85 L 64,80 L 55,88 L 45,84 L 38,92 L 28,86 L 20,88 L 12,78 L 15,68 L 6,62 Z" 
+                    fill="none" stroke="#00ffff" stroke-width="0.4" opacity="0.8" style="filter: drop-shadow(0 0 2px #00ffff);" />
+
+              <!-- Surrounding Islands -->
+              <path d="M 85,15 Q 88,12 90,16 T 87,22 Z" fill="#150f2e" stroke="#00ffff" stroke-width="0.3" />
+              <path d="M 42,8 Q 45,6 47,10 T 43,12 Z" fill="#150f2e" stroke="#00ffff" stroke-width="0.3" />
+              <path d="M 12,90 Q 15,88 16,92 T 13,94 Z" fill="#150f2e" stroke="#00ffff" stroke-width="0.3" />
+
+              <!-- Detailed Terrain: Woodland sector trees -->
+              <polygon points="12,42 10,46 14,46" fill="#1b4d22" stroke="#2e7d32" stroke-width="0.2" />
+              <polygon points="15,44 13,48 17,48" fill="#1b4d22" stroke="#2e7d32" stroke-width="0.2" />
+              <polygon points="10,50 8,54 12,54" fill="#1b4d22" stroke="#2e7d32" stroke-width="0.2" />
+              <polygon points="25,72 23,76 27,76" fill="#1e4620" />
+              <polygon points="28,74 26,78 30,78" fill="#1e4620" />
+              <path d="M 5,20 L 7,20 M 6,18 L 6,20" stroke="#1b4d22" stroke-width="0.4" />
+              <path d="M 28,45 L 30,45 M 29,43 L 29,45" stroke="#1b4d22" stroke-width="0.4" />
+
+              <!-- Winding Boundary River -->
+              <path d="M 35,18 Q 40,32 32,50 T 36,90" stroke="#3651a3" stroke-width="1.8" fill="none" opacity="0.6" />
+              <path d="M 35,18 Q 40,32 32,50 T 36,90" stroke="#00ffff" stroke-width="0.5" stroke-dasharray="1,1" fill="none" />
+
+              <!-- Sea Waves in Ocean regions -->
+              <path d="M 55,80 Q 57,78 59,80" stroke="rgba(0, 255, 255, 0.4)" stroke-width="0.4" fill="none" />
+              <path d="M 62,83 Q 64,81 66,83" stroke="rgba(0, 255, 255, 0.4)" stroke-width="0.4" fill="none" />
+              <path d="M 86,5 Q 88,3 90,5" stroke="rgba(0, 255, 255, 0.4)" stroke-width="0.4" fill="none" />
+              <path d="M 12,15 Q 14,13 16,15" stroke="rgba(0, 255, 255, 0.4)" stroke-width="0.4" fill="none" />
+
+              <!-- Sailing Ship in South Ocean -->
+              <g style="transform: translate(45px, 75px); filter: drop-shadow(0 0 1px #00ffff);">
+                <path d="M 1,6 L 7,6 L 6,8 L 2,8 Z" fill="#ffd700" />
+                <path d="M 4,6 L 4,1 L 2,4 Z" fill="#ffffff" />
+                <path d="M 4,5 L 4,2 L 6,4 Z" fill="#ffffff" />
+                <line x1="4" y1="6" x2="4" y2="1" stroke="#000" stroke-width="0.3" />
+              </g>
+
+              <!-- Sea Dragon in Eastern Sea -->
+              <g style="transform: translate(84px, 80px); filter: drop-shadow(0 0 1px #ff00ff);">
+                <path d="M 1,5 Q 3,1 5,3 T 8,1 T 11,4" stroke="#ff00ff" stroke-width="0.8" fill="none" />
+                <path d="M 1,5 L 0,4 L 1,3 Z" fill="#ff00ff" />
+              </g>
+
+              <!-- Detailed Mountain Ranges -->
+              <polygon points="68,12 64,22 72,22" fill="#2d1f3d" stroke="#5c459e" stroke-width="0.4" />
+              <line x1="68" y1="12" x2="68" y2="22" stroke="#00ffff" stroke-width="0.3" />
+              <polygon points="65,25 61,35 69,35" fill="#2d1f3d" stroke="#5c459e" stroke-width="0.4" />
+              <line x1="65" y1="25" x2="65" y2="35" stroke="#00ffff" stroke-width="0.3" />
+              <polygon points="71,32 66,45 76,45" fill="#2d1f3d" stroke="#5c459e" stroke-width="0.4" />
+              <line x1="71" y1="32" x2="71" y2="45" stroke="#00ffff" stroke-width="0.3" />
+              <polygon points="63,55 58,68 68,68" fill="#2d1f3d" stroke="#5c459e" stroke-width="0.4" />
+              <line x1="63" y1="55" x2="63" y2="68" stroke="#00ffff" stroke-width="0.3" />
+              <!-- Volcano peaks -->
+              <polygon points="86,42 81,55 91,55" fill="#3d1f1f" stroke="#b71c1c" stroke-width="0.4" />
+              <polygon points="86,43 83,55 89,55" fill="#ff3d00" opacity="0.3" />
+              <line x1="86" y1="42" x2="86" y2="55" stroke="#ff3d00" stroke-width="0.3" />
+
+              <!-- Volcano lava cracks -->
+              <path d="M 83,60 Q 88,75 92,72" stroke="#ff3d00" stroke-width="0.6" fill="none" opacity="0.8" />
+              <path d="M 83,60 Q 75,70 73,85" stroke="#ff6f00" stroke-width="0.5" fill="none" opacity="0.8" />
+              <path d="M 92,20 L 95,25 L 90,32" stroke="#403045" stroke-width="0.5" fill="none" />
+
+              <!-- Travel Path (Dotted Gold Road) -->
+              <path d="M 23,60 Q 48,32 53,30" stroke="#ffd700" stroke-width="1.2" stroke-dasharray="2,2" fill="none" />
+              <path d="M 53,30 Q 64,28 83,60" stroke="#ffd700" stroke-width="1.2" stroke-dasharray="2,2" fill="none" />
+
+              <!-- Bridge symbol -->
+              <g style="transform: translate(35px, 45px); rotate: -25deg;">
+                <rect x="0" y="0" width="5" height="3" fill="#4a314d" stroke="#00ffff" stroke-width="0.3" />
+                <line x1="0" y1="0" x2="5" y2="0" stroke="#ffffff" stroke-width="0.4" />
+                <line x1="0" y1="3" x2="5" y2="3" stroke="#ffffff" stroke-width="0.4" />
+              </g>
+
+              <!-- Compass Rose -->
+              <g style="transform: translate(84px, 12px); filter: drop-shadow(0 0 1px #00ffff);">
+                <circle cx="5" cy="5" r="4.5" fill="none" stroke="#5c459e" stroke-width="0.5" />
+                <circle cx="5" cy="5" r="3.8" fill="none" stroke="#00ffff" stroke-width="0.2" stroke-dasharray="1,1" />
+                <polygon points="5,0.5 6,4 5,5" fill="#ff00ff" />
+                <polygon points="5,0.5 4,4 5,5" fill="#00ffff" />
+                <polygon points="5,9.5 6,6 5,5" fill="#00ffff" />
+                <polygon points="5,9.5 4,6 5,5" fill="#ff00ff" />
+                <polygon points="9.5,5 6,6 5,5" fill="#ff00ff" />
+                <polygon points="9.5,5 6,4 5,5" fill="#00ffff" />
+                <polygon points="0.5,5 4,6 5,5" fill="#00ffff" />
+                <polygon points="0.5,5 4,4 5,5" fill="#ff00ff" />
+                <text x="4.2" y="-0.5" font-family="monospace" font-size="2px" fill="#ffffff" font-weight="bold">N</text>
+              </g>
+            </svg>
+
+            <!-- Player Avatar marker -->
+            <div class="player-avatar" id="avatar"></div>
+
+            <!-- LEVEL 1: Town Node (with Ruined & Restored toggle structures) -->
+            <div class="level-node selected ruined" id="node-town" data-stage="1">
+              <div class="node-graphic">
+                
+                <!-- Ruined Graphic SVG -->
+                <div class="cottage-ruined">
+                  <svg width="100%" height="100%" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                    <!-- Collapsed chimney -->
+                    <rect x="11" y="5" width="2" height="3" fill="#292020" />
+                    <!-- Broken roof -->
+                    <polygon points="5,4 2,8 7,8" fill="#3d2c2c" />
+                    <polygon points="12,6 9,8 14,8" fill="#291a1a" />
+                    <polygon points="5,5 3,8 7,8" fill="#523a3a" />
+                    <!-- Charred cracked walls -->
+                    <rect x="3" y="8" width="10" height="7" fill="#4d3b2c" />
+                    <rect x="4" y="9" width="8" height="6" fill="#2e2116" />
+                    <!-- Crack lines -->
+                    <line x1="4" y1="10" x2="6" y2="12" stroke="#000" stroke-width="0.8" />
+                    <line x1="11" y1="9" x2="10" y2="13" stroke="#000" stroke-width="0.8" />
+                    <!-- Askew door -->
+                    <rect x="6.8" y="12" width="2.4" height="3" fill="#261610" style="transform: rotate(-18deg); transform-origin: 6.8px 12px;" />
+                    <!-- Fire glowing inside windows -->
+                    <rect x="4.8" y="10.2" width="1.6" height="1.6" fill="#ff3c00" class="blink-eye" />
+                    <rect x="9.2" y="10.2" width="1.6" height="1.6" fill="#ff9100" class="blink-eye" />
+                  </svg>
+                  <!-- Fire / Ember particles -->
+                  <div class="fire-container">
+                    <div class="fire-spark"></div>
+                    <div class="fire-spark"></div>
+                    <div class="fire-spark"></div>
+                  </div>
+                </div>
+
+                <!-- Restored Graphic SVG -->
+                <div class="cottage-restored" style="display: none;">
+                  <svg width="100%" height="100%" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                    <!-- Chimney -->
+                    <rect x="11" y="2" width="2" height="4" fill="#555" />
+                    <rect x="10" y="1" width="4" height="1" fill="#333" />
+                    <!-- Roof -->
+                    <polygon points="8,2 2,8 14,8" fill="#c23a3a" />
+                    <polygon points="8,3 3,8 13,8" fill="#e95c5c" />
+                    <!-- Walls -->
+                    <rect x="3" y="8" width="10" height="7" fill="#c68a4c" />
+                    <rect x="4" y="9" width="8" height="6" fill="#ecc395" />
+                    <!-- Door -->
+                    <rect x="7" y="11" width="2" height="4" fill="#5c4033" />
+                    <!-- Windows -->
+                    <rect x="5" y="10" width="2" height="2" fill="#00ffff" />
+                    <rect x="9" y="10" width="2" height="2" fill="#00ffff" />
+                  </svg>
+                  <!-- Animated chimney smoke puffs -->
+                  <div class="smoke-container">
+                    <div class="smoke-puff"></div>
+                    <div class="smoke-puff"></div>
+                    <div class="smoke-puff"></div>
+                  </div>
+                </div>
+
+              </div>
+              <div class="node-label">STAGE 1</div>
+            </div>
+
+            <!-- LEVEL 2: Beach Node -->
+            <div class="level-node" id="node-beach" data-stage="2">
+              <div class="node-graphic">
+                <!-- SVG: Beach Palm trees -->
+                <svg width="100%" height="100%" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                  <!-- Island sand base -->
+                  <ellipse cx="8" cy="14" rx="6" ry="1.5" fill="#f0d379" />
+                  <!-- Water waves -->
+                  <path d="M 1,14 Q 3,13 5,14 T 9,14 T 13,14" stroke="#00ffff" stroke-width="0.8" fill="none" />
+                  <!-- Trunk -->
+                  <path d="M 8,14 Q 7,10 8,5" stroke="#965f37" stroke-width="1.2" fill="none" />
+                  <!-- Swaying Leaves -->
+                  <g class="tree-leaves" style="transform-origin: 8px 5px;">
+                    <path d="M 8,5 C 5,4 3,6 2,9" stroke="#258a52" stroke-width="1" fill="none" />
+                    <path d="M 8,5 C 11,4 13,6 14,9" stroke="#258a52" stroke-width="1" fill="none" />
+                    <path d="M 8,5 C 6,2 4,2 3,4" stroke="#48c97c" stroke-width="1" fill="none" />
+                    <path d="M 8,5 C 10,2 12,2 13,4" stroke="#48c97c" stroke-width="1" fill="none" />
+                  </g>
+                </svg>
+                <!-- Lock overlay -->
+                <div class="lock-overlay" style="display: none;">
+                  <svg width="100%" height="100%" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                    <rect x="5" y="7" width="6" height="6" fill="#f44336" />
+                    <rect x="6" y="8" width="4" height="4" fill="#111" />
+                    <path d="M 6,7 L 6,4 C 6,3 7,2 8,2 C 9,2 10,3 10,7" stroke="#eceff1" stroke-width="1.2" fill="none" />
+                  </svg>
+                </div>
+              </div>
+              <div class="node-label">STAGE 2</div>
+            </div>
+
+            <!-- LEVEL 3: Lava Node -->
+            <div class="level-node" id="node-lava" data-stage="3">
+              <div class="node-graphic">
+                <!-- SVG: Volcano with Skull Cave -->
+                <svg width="100%" height="100%" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                  <!-- Volcano Body -->
+                  <polygon points="1,14 5,4 11,4 15,14" fill="#322a3d" />
+                  <polygon points="2,14 5,5 11,5 14,14" fill="#4b3e5c" />
+                  <!-- Lava Lip -->
+                  <rect x="5" y="4" width="6" height="1.2" fill="#ff4400" />
+                  <path d="M 6,5 Q 5.5,9 4.5,14" stroke="#ff3c00" stroke-width="0.8" fill="none" />
+                  <path d="M 9.5,5 Q 10,9 10.5,14" stroke="#ff6f00" stroke-width="0.8" fill="none" />
+                  <!-- Skull Cave Entrance -->
+                  <g fill="#0e0a1b">
+                    <!-- Head outline -->
+                    <path d="M 6,9.5 C 6,7.8 10,7.8 10,9.5 C 10,10.6 9.5,11.2 9.5,12.5 L 6.5,12.5 C 6.5,11.2 6,10.6 6,9.5 Z" />
+                    <!-- Glowing eye holes -->
+                    <rect x="6.8" y="8.8" width="0.7" height="0.7" fill="#ff0000" class="blink-eye" />
+                    <rect x="8.5" y="8.8" width="0.7" height="0.7" fill="#ff0000" class="blink-eye" />
+                    <!-- Nose -->
+                    <polygon points="7.6,9.8 7.3,10.3 7.9,10.3" fill="#ff4400" />
+                    <!-- Jaw teeth lines -->
+                    <line x1="7" y1="12" x2="7" y2="12.5" stroke="#ff007f" stroke-width="0.3" />
+                    <line x1="7.6" y1="12" x2="7.6" y2="12.5" stroke="#ff007f" stroke-width="0.3" />
+                    <line x1="8.2" y1="12" x2="8.2" y2="12.5" stroke="#ff007f" stroke-width="0.3" />
+                  </g>
+                </svg>
+                <!-- Spewing lava particles -->
+                <div class="lava-container">
+                  <div class="lava-spark"></div>
+                  <div class="lava-spark"></div>
+                  <div class="lava-spark"></div>
+                </div>
+                <!-- Lock overlay -->
+                <div class="lock-overlay" style="display: none;">
+                  <svg width="100%" height="100%" viewBox="0 0 16 16" style="image-rendering: pixelated;">
+                    <rect x="5" y="7" width="6" height="6" fill="#f44336" />
+                    <rect x="6" y="8" width="4" height="4" fill="#111" />
+                    <path d="M 6,7 L 6,4 C 6,3 7,2 8,2 C 9,2 10,3 10,7" stroke="#eceff1" stroke-width="1.2" fill="none" />
+                  </svg>
+                </div>
+              </div>
+              <div class="node-label">STAGE 3</div>
+            </div>
+
+          </div>
+
+          <!-- Right side: Level stats/briefing detail card -->
+          <div class="map-details-panel">
+            <div class="panel-header">STAGE DOSSIER</div>
+            
+            <div class="panel-body">
+              <div class="panel-row">
+                <span class="panel-label">LOCATION:</span>
+                <span class="panel-val highlight" id="stage-location">WOODLAND TOWN</span>
+              </div>
+              <div class="panel-row">
+                <span class="panel-label">TARGET BOSS:</span>
+                <span class="panel-val" id="stage-boss">BARNY THE BULLY</span>
+              </div>
+              <div class="panel-row">
+                <span class="panel-label">DANGER LEVEL:</span>
+                <span class="panel-val highlight" id="stage-danger">★★☆☆☆</span>
+              </div>
+              <div class="panel-row">
+                <span class="panel-label">INTEL PROFILE:</span>
+                <p class="panel-desc-box" id="stage-desc">A peaceful farming village overrun by rogue ruffians. Fight through the streets, liberate the town house, and restore peace to the valley.</p>
+              </div>
+            </div>
+
+            <button class="launch-btn" id="launch-btn">DEPLOY STAGE</button>
+            <button class="shop-btn" id="open-shop-btn">HERO SHOP</button>
+          </div>
+
+        </div>
+
+        <!-- Footer actions -->
+        <div class="map-footer">
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <button class="back-btn" id="back-btn">RETURN TO MAIN</button>
+            <button class="back-btn" id="reset-map-btn">RESET STAGES</button>
+            
+            <div class="code-search-box" style="display: flex; align-items: center; gap: 4px; margin-left: 10px; border-left: 2px dashed #403664; padding-left: 12px;">
+              <input type="text" id="level-code-input" placeholder="CODE..." style="font-family: 'Press Start 2P', monospace; font-size: 6px; padding: 6px; background-color: #050818; border: 2px double #00ffff; color: #00ffff; width: 80px; outline: none; text-align: center; text-transform: uppercase;" maxlength="8">
+              <button class="back-btn" id="submit-code-btn" style="padding: 6px 8px;">SEARCH</button>
+            </div>
+          </div>
+          <div class="footer-hints">SELECT STAGE NODE TO NAVIGATE</div>
+        </div>
+
+      </div>
+
+
+      <!-- ================= VIEW 4: PLAY SCREEN (LEVEL 1) ================= -->
+      <div class="game-screen" id="play-screen" style="display: none;">
+        <!-- HUD -->
+        <div class="play-hud">
+          <div class="hud-left">
+            <span class="hud-label" id="hud-hp-label">HP:</span>
+            <div class="health-bar-bg"><div class="health-bar-fill" id="player-hp-bar"></div></div>
+            <span class="hud-label" id="hud-potion-label" style="margin-left: 10px;">POTION:</span>
+            <span class="hud-val" id="player-potions">3</span>
+          </div>
+          <div class="hud-center">
+            <span class="hud-label" id="stage-hud-label">STG-01: WOODLAND TOWN</span>
+          </div>
+          <div class="hud-right">
+            <span class="hud-label">SCORE:</span>
+            <span class="hud-val" id="player-score">0000</span>
+          </div>
+        </div>
+
+        <!-- Boss HUD (visible during boss encounter) -->
+        <div class="boss-hud" id="boss-hud" style="display: none;">
+          <span class="hud-label" id="boss-hud-label" style="color: #ff3300;">BOSS: BARNY THE BULLY</span>
+          <div class="boss-hp-bar-bg">
+            <div class="boss-hp-bar-fill" id="boss-hp-bar"></div>
+            <div class="boss-hp-sector" style="left: 25%;"></div>
+            <div class="boss-hp-sector" style="left: 50%;"></div>
+            <div class="boss-hp-sector" style="left: 75%;"></div>
+          </div>
+        </div>
+
+        <!-- The platformer canvas -->
+        <canvas id="game-canvas"></canvas>
+
+        <!-- Instructions Overlay (Flashing prompt to start) -->
+        <div class="game-overlay active" id="instructions-overlay">
+          <div class="overlay-box">
+            <h3 class="overlay-title" id="briefing-title" style="color: #ffff00;">STAGE 1 BRIEFING</h3>
+            <p class="overlay-text" id="briefing-desc">Barny the Bully is terrorizing Woodland Town!</p>
+            <div class="controls-guide">
+              <div class="control-row"><span class="key">&larr;</span> <span class="key">&rarr;</span> MOVE</div>
+              <div class="control-row"><span class="key">&uarr;</span> JUMP (Double Jump active)</div>
+              <div class="control-row"><span class="key">SPACEBAR</span> SWORD ATTACK</div>
+            </div>
+            <div class="blink-fast" style="font-size: 8px; color: #ff007f; margin-top: 15px;">PRESS ANY KEY / CLICK TO START</div>
+          </div>
+        </div>
+
+        <!-- Game Over Overlay -->
+        <div class="game-overlay" id="gameover-overlay">
+          <div class="overlay-box" style="border-color: #ff3300;">
+            <h3 class="overlay-title" style="color: #ff3300; animation: blink-anim 0.6s infinite alternate;">GAME OVER</h3>
+            <p class="overlay-text">The hero has fallen in battle...</p>
+            <div style="display: flex; gap: 15px; margin-top: 20px;">
+              <button class="menu-btn" id="retry-btn">RETRY</button>
+              <button class="menu-btn" id="map-return-btn">EXIT TO MAP</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Victory Overlay -->
+        <div class="game-overlay" id="victory-overlay">
+          <div class="overlay-box" style="border-color: #ffff00; box-shadow: 0 0 25px rgba(255, 255, 0, 0.5);">
+            <h3 class="overlay-title" style="color: #ffff00;">VICTORY!</h3>
+            <p class="overlay-text" id="victory-desc">Barny the Bully has been defeated!</p>
+            <p class="overlay-text highlight" id="victory-subtitle" style="color: #00ffff; margin-top: 5px;">WOODLAND TOWN IS FREE!</p>
+            
+            <!-- Rewards Panel -->
+            <div class="victory-rewards-panel">
+              <div style="color: #ff3377; font-size: 8px; margin-bottom: 8px; letter-spacing: 1px;">REWARDS EARNED</div>
+              <div class="reward-row">
+                <span>🪙 COINS:</span>
+                <span id="victory-coins-earned" class="reward-val" style="color: #ffd700;">+0</span>
+              </div>
+              <div class="reward-row">
+                <span>💎 DIAMONDS:</span>
+                <span id="victory-diamonds-earned" class="reward-val" style="color: #00ffff;">+0</span>
+              </div>
+              <div id="victory-skin-unlock" class="skin-unlock-msg" style="display: none; color: #ffeb3b; font-size: 8px; margin-top: 10px; line-height: 1.4; border: 1px dashed #ffd700; padding: 6px; background: rgba(255, 235, 59, 0.08);">
+                UNLOCKED SKIN:<br><span style="color:#00ff00;">Forest Ranger</span>!
+              </div>
+            </div>
+            
+            <div style="margin-top: 15px;">
+              <button class="menu-btn" id="victory-ok-btn" style="background-color: #00ff00; border-color: #fff; color: #000;">RETURN TO MAP</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- ================= VIEW 3: LOADING/DEPLOYMENT OVERLAY ================= -->
+      <div class="loading-overlay" id="loading-screen">
+        <div class="loading-text" id="loading-txt">DEPLOYING HERO...</div>
+        <div class="progress-bar-container">
+          <div class="progress-bar-fill" id="progress-bar"></div>
+        </div>
+      </div>
+
+      <!-- ================= HERO SHOP OVERLAY ================= -->
+      <div class="game-overlay" id="shop-overlay" style="display: none; z-index: 40;">
+        <div class="shop-box">
+          <h3 class="shop-title">HERO SHOP</h3>
+          
+          <div class="shop-currency">
+            <span style="color: #ffd700;">🪙 <span id="shop-coins">0000</span></span>
+            <span style="margin-left: 20px; color: #00ffff;">💎 <span id="shop-diamonds">000</span></span>
+          </div>
+
+          <!-- Tab Buttons -->
+          <div class="shop-tabs">
+            <button class="tab-btn active" id="tab-upgrades">UPGRADES</button>
+            <button class="tab-btn" id="tab-skins">SKINS</button>
+          </div>
+
+          <!-- Upgrades Panel -->
+          <div class="shop-panel" id="panel-upgrades-content">
+            <div class="shop-item">
+              <div class="item-info">
+                <div class="item-name">MAX HP</div>
+                <div class="item-desc">Increase max health (+20 HP)</div>
+                <div class="item-rank" id="rank-hp">RANK: 0/5</div>
+              </div>
+              <button class="buy-btn" id="buy-hp">100 🪙</button>
+            </div>
+            <div class="shop-item">
+              <div class="item-info">
+                <div class="item-name">ATTACK DAMAGE</div>
+                <div class="item-desc">Increase attack damage (+5 Dmg)</div>
+                <div class="item-rank" id="rank-damage">RANK: 0/5</div>
+              </div>
+              <button class="buy-btn" id="buy-damage">150 🪙</button>
+            </div>
+            <div class="shop-item">
+              <div class="item-info">
+                <div class="item-name">POTION CAPACITY</div>
+                <div class="item-desc">Carry more potions (+1 starting potion)</div>
+                <div class="item-rank" id="rank-potions">RANK: 0/3</div>
+              </div>
+              <button class="buy-btn" id="buy-potions">120 🪙</button>
+            </div>
+            <div class="shop-item">
+              <div class="item-info">
+                <div class="item-name">POTION POTENCY</div>
+                <div class="item-desc">Heal more HP per potion (+10 HP)</div>
+                <div class="item-rank" id="rank-potionheal">RANK: 0/4</div>
+              </div>
+              <button class="buy-btn" id="buy-potionheal">100 🪙</button>
+            </div>
+          </div>
+
+          <!-- Skins Panel -->
+          <div class="shop-panel" id="panel-skins-content" style="display: none;">
+            <div class="skins-container">
+              <!-- Left side: Skin List -->
+              <div class="skin-list" id="skin-list-container">
+                <!-- Dynamically filled by JS -->
+              </div>
+              <!-- Right side: Skin Preview -->
+              <div class="skin-preview-box">
+                <div class="preview-title" id="preview-skin-name">WOODLAND KNIGHT</div>
+                <canvas id="shop-skin-preview" width="80" height="96" style="image-rendering: pixelated; margin: 5px 0; background: #0c0819; border: 2px solid #362e54;"></canvas>
+                <p class="preview-desc" id="preview-skin-desc">Classic defender of the woodland valley.</p>
+                <button class="equip-btn" id="equip-skin-btn">EQUIP</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="shop-footer">
+            <button class="menu-btn" id="close-shop-btn">CLOSE SHOP</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Link external script -->
+  <script src="script.js" defer></script>
+</body>
+</html>

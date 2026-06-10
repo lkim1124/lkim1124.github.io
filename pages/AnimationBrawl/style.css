@@ -1,0 +1,1471 @@
+/* Reset and base styles */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+body {
+  background-color: #0b0914;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  perspective: 1000px;
+}
+
+/* Outer Arcade Cabinet Frame */
+.cabinet-wrapper {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  max-width: 1000px;
+  max-height: 562.5px; /* 16:9 ratio */
+  border: 12px solid #241d3b;
+  border-radius: 20px;
+  box-shadow: 
+    0 0 0 4px #0c0919,
+    0 20px 40px rgba(0, 0, 0, 0.8),
+    inset 0 0 30px rgba(0, 0, 0, 0.9);
+  background-color: #000;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.1s ease;
+}
+
+/* CRT Bulge and Glare Overlay */
+.crt-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10;
+  pointer-events: none;
+  background: 
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.08) 0%, rgba(0, 0, 0, 0.3) 100%),
+    linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%);
+  background-size: 100% 100%, 100% 4px; /* scanlines */
+  opacity: 0.85;
+}
+
+.crt-glass {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 11;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 15%, rgba(255, 255, 255, 0) 50%);
+}
+
+.crt-vignette {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 12;
+  pointer-events: none;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.95);
+}
+
+/* Transition Viewport */
+.screen-viewport {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #000;
+  transform-origin: center center;
+}
+
+/* Game Screen Base */
+.game-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 30px 20px;
+  overflow: hidden;
+  background-size: cover;
+  background-position: center;
+  image-rendering: pixelated;
+}
+
+/* --- VIEW 1: START SCREEN --- */
+#main-screen {
+  background-image: url('data/background_road.png');
+}
+
+#effect-canvas {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.ui-wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 2;
+}
+
+.header-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #ff3377;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.blink-fast {
+  animation: blink-anim 0.6s infinite alternate;
+}
+
+.title-container {
+  margin-top: auto;
+  margin-bottom: auto;
+  text-align: center;
+  transform: translateY(-10px);
+}
+
+.game-title {
+  font-family: 'Silkscreen', 'Press Start 2P', monospace;
+  font-size: 44px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #ffffff;
+  text-shadow: 
+    -2px -2px 0 #000,  
+     2px -2px 0 #000,
+    -2px  2px 0 #000,
+     2px  2px 0 #000,
+     0px  4px 0 #d80073,
+     0px  8px 0 #800080,
+     4px  12px 10px rgba(0,0,0,0.8);
+  animation: float 4s ease-in-out infinite;
+  position: relative;
+}
+
+.game-subtitle {
+  font-size: 11px;
+  letter-spacing: 6px;
+  color: #00ffff;
+  text-shadow: 2px 2px 0px #000;
+  margin-top: 15px;
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+
+.button-container {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+}
+
+.start-btn {
+  background-color: #ff007f;
+  border: 4px solid #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 16px;
+  font-weight: bold;
+  color: #fff;
+  padding: 18px 40px;
+  cursor: pointer;
+  position: relative;
+  outline: none;
+  box-shadow: 
+    0px 6px 0px #99004d,
+    0px 10px 0px #000,
+    0px 0px 20px rgba(255, 0, 127, 0.4);
+  transition: all 0.1s ease;
+}
+
+.start-btn:hover {
+  background-color: #ff3399;
+  transform: translateY(2px);
+  box-shadow: 
+    0px 4px 0px #99004d,
+    0px 8px 0px #000,
+    0px 0px 30px rgba(255, 51, 153, 0.8);
+}
+
+.start-btn:active {
+  transform: translateY(6px);
+  box-shadow: 
+    0px 0px 0px #99004d,
+    0px 4px 0px #000,
+    0px 0px 10px rgba(255, 51, 153, 0.2);
+}
+
+.press-start-text {
+  font-size: 11px;
+  color: #e2c027;
+  text-shadow: 2px 2px 0px #000;
+  letter-spacing: 2px;
+  cursor: pointer;
+  animation: blink-anim 0.8s infinite steps(2);
+}
+
+.footer-bar {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  font-size: 8px;
+  color: #8c889e;
+  text-shadow: 1px 1px 0px #000;
+  letter-spacing: 1px;
+}
+
+.fighter-silhouette {
+  position: absolute;
+  bottom: 20px;
+  width: 80px;
+  height: 150px;
+  opacity: 0.35;
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.fighter-left {
+  left: 30px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 48" fill="%2300ffff"><rect x="8" y="2" width="8" height="8"/><rect x="6" y="10" width="12" height="18"/><rect x="4" y="12" width="2" height="12"/><rect x="18" y="12" width="2" height="12"/><rect x="6" y="28" width="4" height="16"/><rect x="14" y="28" width="4" height="16"/></svg>');
+  animation: idle-fight-left 0.8s infinite alternate step-end;
+}
+
+.fighter-right {
+  right: 30px;
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 48" fill="%23ff00ff"><rect x="8" y="2" width="8" height="8"/><rect x="6" y="10" width="12" height="18"/><rect x="4" y="12" width="2" height="12"/><rect x="18" y="12" width="2" height="12"/><rect x="6" y="28" width="4" height="16"/><rect x="14" y="28" width="4" height="16"/></svg>');
+  transform: scaleX(-1);
+  animation: idle-fight 1s infinite alternate-reverse step-end;
+}
+
+
+/* --- VIEW 2: LEVEL MAP SCREEN --- */
+#map-screen {
+  background: linear-gradient(rgba(15, 11, 28, 0.88), rgba(15, 11, 28, 0.88)), url('data/background_road.png');
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 15px 25px;
+}
+
+.map-header {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 12px;
+  border-bottom: 2px dashed #403664;
+  padding-bottom: 8px;
+}
+
+.map-title {
+  font-size: 20px;
+  color: #00ffff;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 0px #000;
+  animation: neon-flicker 3s infinite alternate;
+}
+
+.map-container {
+  display: flex;
+  flex: 1;
+  gap: 20px;
+  min-height: 0;
+}
+
+/* Map Board (Grid layout for nodes) */
+.map-board {
+  flex: 1.8;
+  background-color: #050818;
+  border: 4px double #00ffff;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: inset 0 0 30px rgba(0, 0, 0, 0.9), 0 0 8px rgba(0,255,255,0.2);
+  background-image: 
+    radial-gradient(ellipse at 40% 55%, rgba(14, 10, 40, 0.95) 40%, rgba(5, 8, 24, 1) 100%);
+}
+
+/* Map Legend */
+.map-legend {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  z-index: 3;
+  border: 1px solid #403664;
+  border-radius: 3px;
+  background: rgba(5,8,24,0.85);
+  padding: 4px 6px;
+  pointer-events: none;
+}
+.legend-title {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 5px;
+  color: #00ffff;
+  margin-bottom: 3px;
+  letter-spacing: 0.5px;
+}
+.legend-item {
+  font-family: monospace;
+  font-size: 6px;
+  color: #8c889e;
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  line-height: 1.6;
+}
+.legend-symbol {
+  font-size: 8px;
+}
+
+/* SVG Path Overlay */
+.map-paths-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Level Nodes */
+.level-node {
+  position: absolute;
+  width: 80px;
+  height: 80px;
+  z-index: 3;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease;
+}
+
+.level-node:hover {
+  transform: scale(1.15);
+}
+
+/* Node graphic boxes */
+.node-graphic {
+  width: 54px;
+  height: 54px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+/* Node 1: Woodland Town - Forest Green representing the farming village */
+#node-town .node-graphic {
+  border: 3px solid #2e7d32;
+  background-color: #111a13;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 0 8px rgba(46, 125, 50, 0.4);
+}
+#node-town:hover .node-graphic, 
+#node-town.selected .node-graphic {
+  border-color: #4caf50;
+  box-shadow: 0 0 15px rgba(76, 175, 80, 0.8), inset 0 0 8px rgba(76, 175, 80, 0.6);
+  background-color: #192e1e;
+}
+
+/* Node 2: Sunny Beach - Ocean Blue representing the tropical pirate shore */
+#node-beach .node-graphic {
+  border: 3px solid #0288d1;
+  background-color: #0f1c29;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 0 8px rgba(2, 136, 209, 0.4);
+}
+#node-beach:hover .node-graphic, 
+#node-beach.selected .node-graphic {
+  border-color: #00ffff;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.8), inset 0 0 8px rgba(0, 255, 255, 0.6);
+  background-color: #142a3a;
+}
+
+/* Node 3: Lava Caldera - Volcanic Red representing danger and fire */
+#node-lava .node-graphic {
+  border: 3px solid #b71c1c;
+  background-color: #1a0f0f;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 0 8px rgba(183, 28, 28, 0.4);
+}
+#node-lava:hover .node-graphic, 
+#node-lava.selected .node-graphic {
+  border-color: #ff3d00;
+  box-shadow: 0 0 15px rgba(255, 61, 0, 0.9), inset 0 0 8px rgba(255, 61, 0, 0.6);
+  background-color: #2e1414;
+}
+
+.node-label {
+  font-size: 8px;
+  margin-top: 6px;
+  color: #8c889e;
+  text-shadow: 1px 1px 0px #000;
+  letter-spacing: 1px;
+  text-align: center;
+  transition: color 0.2s ease;
+}
+
+#node-town.selected .node-label,
+#node-town:hover .node-label {
+  color: #4caf50;
+  text-shadow: 0 0 2px rgba(76, 175, 80, 0.5), 1px 1px 0px #000;
+}
+
+#node-beach.selected .node-label,
+#node-beach:hover .node-label {
+  color: #00ffff;
+  text-shadow: 0 0 2px rgba(0, 255, 255, 0.5), 1px 1px 0px #000;
+}
+
+#node-lava.selected .node-label,
+#node-lava:hover .node-label {
+  color: #ff3d00;
+  text-shadow: 0 0 2px rgba(255, 61, 0, 0.5), 1px 1px 0px #000;
+}
+
+/* Player Avatar Sprite Pointer - Knight Character */
+.player-avatar {
+  position: absolute;
+  width: 24px;
+  height: 36px;
+  z-index: 4;
+  pointer-events: none;
+  transform: translate(-12px, -18px); /* center alignment adjusted for height */
+  transition: left 0.4s cubic-bezier(0.25, 0.8, 0.25, 1), top 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 24"><rect x="2" y="8" width="6" height="12" fill="%23b71c1c" /><rect x="4" y="8" width="8" height="8" fill="%23a0a0a8" /><rect x="6" y="9" width="4" height="6" fill="%23e2e2e8" /><rect x="4" y="1" width="8" height="7" fill="%23c0c0c8" /><rect x="7" y="3" width="5" height="2" fill="%23171721" /><rect x="8" y="4" width="2" height="1" fill="%23ffff00" /><rect x="5" y="0" width="3" height="3" fill="%230055ff" /><rect x="5" y="16" width="2" height="4" fill="%238e8e9c" /><rect x="9" y="16" width="2" height="4" fill="%238e8e9c" /><rect x="4" y="20" width="3" height="2" fill="%235c4033" /><rect x="9" y="20" width="3" height="2" fill="%235c4033" /></svg>');
+  background-size: contain;
+  background-repeat: no-repeat;
+  animation: avatar-bounce 0.6s infinite alternate ease-in-out;
+}
+
+/* Stage Biomes Position settings */
+#node-town { left: 15%; top: 58%; }
+#node-beach { left: 48%; top: 22%; }
+#node-lava { left: 78%; top: 58%; }
+
+/* Custom Biome Animations */
+/* 1. Town Chimney Smoke */
+.smoke-container {
+  position: absolute;
+  top: -8px;
+  right: 14px;
+  width: 12px;
+  height: 20px;
+  pointer-events: none;
+}
+.smoke-puff {
+  position: absolute;
+  bottom: 0;
+  left: 4px;
+  width: 3px;
+  height: 3px;
+  background: #a8a8a8;
+  opacity: 0;
+  animation: rise-smoke 1.8s infinite ease-out;
+}
+.smoke-puff:nth-child(2) { animation-delay: 0.6s; left: 6px; }
+.smoke-puff:nth-child(3) { animation-delay: 1.2s; left: 2px; }
+
+@keyframes rise-smoke {
+  0% { transform: translateY(0) scale(1); opacity: 0.8; background: #888; }
+  50% { opacity: 0.5; }
+  100% { transform: translateY(-16px) scale(2.2); opacity: 0; background: #ddd; }
+}
+
+/* Cottage state containers */
+.cottage-ruined, .cottage-restored {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Ruined node border override */
+#node-town.ruined .node-graphic {
+  border-color: #6d2a2a;
+  background-color: #1a0e0e;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.6), inset 0 0 8px rgba(183,28,28,0.5), 0 0 10px rgba(255,60,0,0.3);
+}
+
+/* Fire Ember Particles (Ruined Cottage) */
+.fire-container {
+  position: absolute;
+  top: 2px;
+  left: 14px;
+  width: 20px;
+  height: 20px;
+  pointer-events: none;
+}
+.fire-spark {
+  position: absolute;
+  bottom: 6px;
+  left: 8px;
+  width: 3px;
+  height: 3px;
+  background: #ff4400;
+  border-radius: 1px;
+  opacity: 0;
+  animation: spew-fire 1.0s infinite ease-out;
+}
+.fire-spark:nth-child(2) { animation-delay: 0.33s; left: 5px; background: #ff8800; --drift: 4px; }
+.fire-spark:nth-child(3) { animation-delay: 0.66s; left: 12px; background: #ffcc00; --drift: -3px; }
+
+@keyframes spew-fire {
+  0%   { transform: translateY(0) scale(1); opacity: 1; }
+  70%  { opacity: 0.6; }
+  100% { transform: translateY(-18px) translateX(var(--drift, -2px)) scale(0.3); opacity: 0; }
+}
+
+/* 2. Beach Palm sway */
+.tree-leaves {
+  animation: sway 2s infinite ease-in-out alternate;
+}
+@keyframes sway {
+  0% { transform: rotate(-5deg); }
+  100% { transform: rotate(8deg); }
+}
+
+/* 3. Lava Cave spews & Glowing Eyes */
+.lava-container {
+  position: absolute;
+  top: 6px;
+  left: 14px;
+  width: 26px;
+  height: 25px;
+  pointer-events: none;
+}
+.lava-spark {
+  position: absolute;
+  bottom: 12px;
+  left: 10px;
+  width: 3px;
+  height: 3px;
+  background: #ff3300;
+  opacity: 0;
+  animation: spew-lava 1.2s infinite ease-out;
+}
+.lava-spark:nth-child(2) { animation-delay: 0.4s; left: 8px; background: #ff6600; --drift: 4px;}
+.lava-spark:nth-child(3) { animation-delay: 0.8s; left: 12px; background: #ffaa00; --drift: -3px;}
+
+@keyframes spew-lava {
+  0% { transform: translateY(0) scale(1); opacity: 1; }
+  100% { transform: translateY(-16px) translateX(var(--drift, -2px)) scale(0.4); opacity: 0; }
+}
+
+.blink-eye {
+  animation: glow-eyes 1.2s infinite alternate;
+}
+@keyframes glow-eyes {
+  0% { fill: #aa0000; }
+  100% { fill: #ff2200; filter: drop-shadow(0 0 1px #ff2200); }
+}
+
+/* Level Details Side Panel */
+.map-details-panel {
+  flex: 1;
+  border: 4px double #00ffff;
+  border-radius: 8px;
+  background-color: #0e0a1b;
+  padding: 15px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  box-shadow: inset 0 0 15px rgba(0,0,0,0.8);
+}
+
+.panel-header {
+  font-size: 10px;
+  color: #ff3377;
+  border-bottom: 2px solid #ff3377;
+  padding-bottom: 6px;
+  margin-bottom: 10px;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.panel-body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.panel-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.panel-label {
+  font-size: 8px;
+  color: #8c889e;
+  letter-spacing: 1px;
+}
+
+.panel-val {
+  font-size: 10px;
+  color: #fff;
+  letter-spacing: 1px;
+  line-height: 1.4;
+}
+
+.panel-val.highlight {
+  color: #ffff00;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.panel-desc-box {
+  font-size: 9px;
+  line-height: 1.5;
+  color: #bfbcd0;
+  background-color: #17122b;
+  border: 2px solid #362e54;
+  padding: 8px;
+  border-radius: 4px;
+  margin-top: 4px;
+  flex-grow: 1;
+}
+
+.launch-btn {
+  width: 100%;
+  background-color: #ff007f;
+  color: #fff;
+  border: 3px solid #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  padding: 12px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 4px 0px #99004d, 0px 6px 0px #000;
+  transition: all 0.05s ease;
+  margin-top: 15px;
+}
+
+.launch-btn:hover {
+  background-color: #ff3399;
+  box-shadow: 0 4px 0px #99004d, 0px 6px 0px #000, 0 0 10px rgba(255, 0, 127, 0.5);
+}
+
+.launch-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0px #99004d, 0px 2px 0px #000;
+}
+
+/* Map Footer Actions */
+.map-footer {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 12px;
+  border-top: 2px dashed #403664;
+  padding-top: 8px;
+}
+
+.back-btn {
+  background: none;
+  border: 2px solid #8c889e;
+  color: #8c889e;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 8px 14px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.back-btn:hover {
+  border-color: #fff;
+  color: #fff;
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.footer-hints {
+  font-size: 8px;
+  color: #5d567a;
+  letter-spacing: 1px;
+}
+
+
+/* --- VIEW 3: LOADING OVERLAY SCREEN --- */
+.loading-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 50;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+
+.loading-overlay.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.loading-text {
+  color: #00ff00;
+  font-size: 16px;
+  letter-spacing: 3px;
+  animation: blink-anim 0.8s infinite steps(2);
+}
+
+/* Pixelated progress bar loading */
+.progress-bar-container {
+  width: 250px;
+  height: 16px;
+  border: 3px solid #00ff00;
+  padding: 2px;
+  background-color: #000;
+}
+
+.progress-bar-fill {
+  width: 0%;
+  height: 100%;
+  background-color: #00ff00;
+}
+
+
+/* --- CORE SCREEN TRANSITIONS & CRT SHAKE --- */
+.cabinet-screen-viewport {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+/* Screen shake */
+.shake {
+  animation: screen-shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes screen-shake {
+  10%, 90% { transform: translate3d(-2px, -1px, 0) rotate(-0.5deg); }
+  20%, 80% { transform: translate3d(3px, 2px, 0) rotate(1deg); }
+  30%, 50%, 70% { transform: translate3d(-5px, -3px, 0) rotate(-1deg); }
+  40%, 60% { transform: translate3d(5px, 3px, 0) rotate(1deg); }
+}
+
+/* CRT Shutoff Transition */
+.shutoff {
+  animation: crt-shutoff 0.6s cubic-bezier(0.25, 1, 0.5, 1) forwards;
+}
+
+@keyframes crt-shutoff {
+  0% { transform: scale(1); filter: brightness(1) contrast(1); }
+  45% { transform: scaleY(0.015) scaleX(1.05); filter: brightness(4) contrast(1.5); }
+  90% { transform: scaleY(0.015) scaleX(0.005); filter: brightness(8) contrast(2); }
+  100% { transform: scale(0); filter: brightness(0); }
+}
+
+/* CRT Power-on Transition */
+.power-on {
+  animation: crt-poweron 0.5s ease-out forwards;
+}
+
+@keyframes crt-poweron {
+  0% { transform: scaleY(0.01) scaleX(0); filter: brightness(4); }
+  50% { transform: scaleY(0.01) scaleX(1); filter: brightness(3); }
+  100% { transform: scale(1); filter: brightness(1); }
+}
+
+/* CRT screen flicker */
+.flicker {
+  animation: screen-flicker 0.15s infinite;
+}
+
+@keyframes screen-flicker {
+  0% { opacity: 0.985; }
+  50% { opacity: 1; }
+  100% { opacity: 0.985; }
+}
+
+/* Helper Animations */
+@keyframes float {
+  0% { transform: translateY(0px) rotate(0deg); }
+  50% { transform: translateY(-12px) rotate(1deg); }
+  100% { transform: translateY(0px) rotate(0deg); }
+}
+
+@keyframes pulse-glow {
+  0% { text-shadow: 0 0 5px rgba(0, 255, 255, 0.4), 2px 2px 0px #000; color: #00ffff; }
+  100% { text-shadow: 0 0 15px rgba(0, 255, 255, 0.9), 2px 2px 0px #000; color: #d0ffff; }
+}
+
+@keyframes blink-anim {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+@keyframes avatar-bounce {
+  0% { transform: translate(-12px, -26px); }
+  100% { transform: translate(-12px, -18px); }
+}
+
+@keyframes neon-flicker {
+  0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+    text-shadow: 0 0 4px #00ffff, 0 0 10px #00ffff, 2px 2px 0px #000;
+  }
+  20%, 24%, 55% {
+    text-shadow: none;
+    color: #008888;
+  }
+}
+
+/* --- PLAY SCREEN (LEVEL 1) STYLING --- */
+#play-screen {
+  background-color: #172017; /* Dark woodland forest green */
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: stretch;
+  padding: 0;
+}
+
+#game-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+  background-color: #1a2217;
+  image-rendering: pixelated;
+  z-index: 1;
+}
+
+/* HUD Overlay */
+.play-hud {
+  position: absolute;
+  top: 12px;
+  left: 15px;
+  right: 15px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.hud-left, .hud-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hud-center {
+  font-size: 8px;
+  color: #00ffff;
+  text-shadow: 1px 1px 0px #000;
+  letter-spacing: 1px;
+}
+
+.hud-label {
+  font-size: 8px;
+  color: #8c889e;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.hud-val {
+  font-size: 8px;
+  color: #ffff00;
+  text-shadow: 1px 1px 0px #000;
+}
+
+/* Player Health Bar */
+.health-bar-bg {
+  width: 90px;
+  height: 10px;
+  border: 2px solid #fff;
+  background-color: #000;
+  padding: 1px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+}
+
+.health-bar-fill {
+  width: 100%;
+  height: 100%;
+  background-color: #ff0055;
+  transition: width 0.1s ease;
+}
+
+/* Boss Health Bar Overlay */
+.boss-hud {
+  position: absolute;
+  top: 40px;
+  left: 20%;
+  right: 20%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  z-index: 10;
+  pointer-events: none;
+}
+
+.boss-hp-bar-bg {
+  width: 100%;
+  height: 8px;
+  border: 2px solid #fff;
+  background-color: #000;
+  padding: 1px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.6);
+  position: relative;
+}
+
+.boss-hp-bar-fill {
+  width: 100%;
+  height: 100%;
+  background-color: #ff3300;
+  transition: width 0.1s ease;
+}
+
+.boss-hp-sector {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background-color: #ffffff;
+  z-index: 2;
+  pointer-events: none;
+}
+
+/* Modal overlays inside game viewport */
+.game-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(9, 7, 16, 0.85);
+  display: none;
+  align-items: center;
+  justify-content: center;
+  z-index: 20;
+}
+
+.game-overlay.active {
+  display: flex;
+}
+
+.overlay-box {
+  background-color: #0e0a1b;
+  border: 4px double #ff007f;
+  border-radius: 8px;
+  padding: 24px;
+  text-align: center;
+  width: 90%;
+  max-width: 440px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.overlay-title {
+  font-family: 'Silkscreen', 'Press Start 2P', monospace;
+  font-size: 16px;
+  letter-spacing: 2px;
+  margin-bottom: 12px;
+  text-shadow: 2px 2px 0px #000;
+}
+
+.overlay-text {
+  font-size: 8px;
+  line-height: 1.6;
+  color: #bfbcd0;
+  margin-bottom: 15px;
+  text-shadow: 1px 1px 0px #000;
+}
+
+.overlay-text.highlight {
+  color: #00ffff;
+  font-size: 9px;
+  letter-spacing: 1px;
+}
+
+/* Tutorial controls guide styling */
+.controls-guide {
+  background-color: #17112a;
+  border: 2px solid #362e54;
+  border-radius: 4px;
+  padding: 12px 18px;
+  margin: 8px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.control-row {
+  font-size: 8px;
+  color: #a5a1b8;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.key {
+  background-color: #fff;
+  color: #000;
+  padding: 3px 6px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-weight: bold;
+  box-shadow: 0 2px 0px #8c889e;
+}
+
+/* Styled overlay buttons */
+.menu-btn {
+  background-color: #ff007f;
+  border: 3px solid #fff;
+  color: #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 10px 18px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 3px 0 #99004d, 0 5px 0 #000;
+  transition: all 0.05s ease;
+}
+
+.menu-btn:hover {
+  background-color: #ff3399;
+  box-shadow: 0 3px 0 #99004d, 0 5px 0 #000, 0 0 8px rgba(255, 0, 127, 0.4);
+}
+
+.menu-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 0px 0 #99004d, 0 2px 0 #000;
+}
+
+/* Completed stage node graphic styling */
+.level-node.completed .node-graphic {
+  border-color: #00ff00 !important;
+  box-shadow: 0 0 15px rgba(0, 255, 0, 0.8), inset 0 0 8px rgba(0, 255, 0, 0.5) !important;
+}
+.level-node.completed .node-label {
+  color: #00ff00 !important;
+  text-shadow: 0 0 2px rgba(0, 255, 0, 0.5), 1px 1px 0px #000 !important;
+}
+
+/* Lock overlay styles */
+.lock-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.72);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 5;
+}
+.lock-overlay svg {
+  width: 20px;
+  height: 20px;
+}
+.level-node.locked {
+  cursor: not-allowed;
+}
+.level-node.locked:hover {
+  transform: none; /* disable zoom on hover for locked stages */
+}
+.level-node.locked .node-label {
+  color: #5d567a !important;
+  text-shadow: 1px 1px 0px #000 !important;
+}
+
+/* --- CURRENCY STYLES ON MAP SCREEN --- */
+.map-currency-bar {
+  display: flex;
+  justify-content: center;
+  margin-top: 6px;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.currency-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* --- HERO SHOP BUTTON --- */
+.shop-btn {
+  width: 100%;
+  background-color: #00ffff;
+  color: #000;
+  border: 3px solid #fff;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 11px;
+  font-weight: bold;
+  padding: 12px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 4px 0px #008080, 0px 6px 0px #000;
+  transition: all 0.05s ease;
+  margin-top: 10px;
+}
+.shop-btn:hover {
+  background-color: #80ffff;
+  box-shadow: 0 4px 0px #008080, 0px 6px 0px #000, 0 0 10px rgba(0, 255, 255, 0.5);
+}
+.shop-btn:active {
+  transform: translateY(4px);
+  box-shadow: 0 0px 0px #008080, 0px 2px 0px #000;
+}
+
+/* --- VICTORY REWARDS PANEL --- */
+.victory-rewards-panel {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  background-color: #0c0819;
+  border: 2px dashed #ff3377;
+  padding: 10px 15px;
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  width: 260px;
+}
+.reward-row {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+.reward-val {
+  font-weight: bold;
+}
+
+/* --- HERO SHOP MODAL OVERLAY --- */
+.shop-box {
+  background-color: #0e0a1b;
+  border: 4px double #00ffff;
+  border-radius: 8px;
+  padding: 16px;
+  text-align: center;
+  width: 95%;
+  max-width: 470px;
+  height: 90%;
+  max-height: 245px;
+  box-shadow: 0 0 25px rgba(0, 255, 255, 0.4), 0 10px 25px rgba(0,0,0,0.9);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.shop-title {
+  font-family: 'Silkscreen', 'Press Start 2P', monospace;
+  font-size: 14px;
+  letter-spacing: 2px;
+  color: #00ffff;
+  text-shadow: 2px 2px 0px #000;
+  margin-bottom: 2px;
+  animation: pulse-glow 2s ease-in-out infinite alternate;
+}
+.shop-currency {
+  font-size: 9px;
+  margin-bottom: 6px;
+  background-color: #05030c;
+  padding: 4px 12px;
+  border: 1px solid #362e54;
+  border-radius: 4px;
+}
+.shop-tabs {
+  display: flex;
+  gap: 8px;
+  width: 100%;
+  margin-bottom: 8px;
+  border-bottom: 2px solid #362e54;
+  padding-bottom: 4px;
+}
+.tab-btn {
+  background-color: #1a1530;
+  border: 2px solid #362e54;
+  color: #8c889e;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+  outline: none;
+  transition: all 0.1s ease;
+}
+.tab-btn.active {
+  background-color: #00ffff;
+  border-color: #fff;
+  color: #000;
+}
+.tab-btn:hover:not(.active) {
+  border-color: #00ffff;
+  color: #fff;
+}
+.shop-panel {
+  width: 100%;
+  flex: 1;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-right: 4px;
+}
+/* Style the scrollbar */
+.shop-panel::-webkit-scrollbar {
+  width: 6px;
+}
+.shop-panel::-webkit-scrollbar-track {
+  background: #05030c;
+}
+.shop-panel::-webkit-scrollbar-thumb {
+  background: #362e54;
+  border-radius: 3px;
+}
+.shop-panel::-webkit-scrollbar-thumb:hover {
+  background: #00ffff;
+}
+
+.shop-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #17122b;
+  border: 2px solid #362e54;
+  padding: 6px 8px;
+  border-radius: 4px;
+  text-align: left;
+}
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.item-name {
+  font-size: 8px;
+  color: #fff;
+  font-weight: bold;
+}
+.item-desc {
+  font-size: 6px;
+  color: #8c889e;
+}
+.item-rank {
+  font-size: 6px;
+  color: #ffff00;
+}
+.buy-btn {
+  background-color: #ffd700;
+  border: 2px solid #fff;
+  color: #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 7px;
+  padding: 6px 10px;
+  cursor: pointer;
+  box-shadow: 0 2px 0px #b59500;
+  outline: none;
+  white-space: nowrap;
+}
+.buy-btn:hover:not(:disabled) {
+  background-color: #ffea53;
+}
+.buy-btn:disabled {
+  background-color: #424242;
+  border-color: #616161;
+  color: #9e9e9e;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.buy-btn.maxed {
+  background-color: #00ff00;
+  border-color: #fff;
+  color: #000;
+  box-shadow: none;
+  cursor: default;
+}
+
+/* Skins Layout */
+.skins-container {
+  display: flex;
+  gap: 10px;
+  width: 100%;
+  height: 100%;
+}
+.skin-list {
+  flex: 1.2;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-y: auto;
+  max-height: 145px;
+}
+/* Style list scrollbar */
+.skin-list::-webkit-scrollbar {
+  width: 4px;
+}
+.skin-list::-webkit-scrollbar-track {
+  background: #05030c;
+}
+.skin-list::-webkit-scrollbar-thumb {
+  background: #362e54;
+  border-radius: 2px;
+}
+.skin-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #17122b;
+  border: 2px solid #362e54;
+  padding: 6px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+}
+.skin-card:hover {
+  border-color: #00ffff;
+  background-color: #211a3d;
+}
+.skin-card.selected {
+  border-color: #00ffff;
+  background-color: #1e1d45;
+  box-shadow: 0 0 5px rgba(0, 255, 255, 0.4);
+}
+.skin-card-name {
+  font-size: 7px;
+  color: #fff;
+  font-weight: bold;
+}
+.skin-card-status {
+  font-size: 6px;
+  color: #8c889e;
+}
+
+.skin-preview-box {
+  flex: 0.8;
+  background-color: #17122b;
+  border: 2px solid #362e54;
+  border-radius: 4px;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.preview-title {
+  font-size: 7px;
+  color: #ff3377;
+  font-weight: bold;
+  text-align: center;
+  letter-spacing: 0.5px;
+}
+.preview-desc {
+  font-size: 5px;
+  color: #bfbcd0;
+  text-align: center;
+  line-height: 1.3;
+  margin-bottom: 2px;
+}
+.equip-btn {
+  width: 100%;
+  background-color: #00ff00;
+  border: 2px solid #fff;
+  color: #000;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 8px;
+  padding: 6px;
+  cursor: pointer;
+  outline: none;
+  box-shadow: 0 2px 0px #008000;
+}
+.equip-btn:hover:not(:disabled) {
+  background-color: #55ff55;
+}
+.equip-btn:disabled {
+  background-color: #424242;
+  border-color: #616161;
+  color: #9e9e9e;
+  box-shadow: none;
+  cursor: not-allowed;
+}
+.equip-btn.equipped-state {
+  background-color: #1a1530;
+  border-color: #362e54;
+  color: #00ff00;
+  box-shadow: none;
+  cursor: default;
+}
+.shop-footer {
+  width: 100%;
+  margin-top: 4px;
+}
+
+/* --- CODE SEARCH ERROR ANIMATIONS --- */
+.code-error-shake {
+  animation: code-shake-anim 0.4s ease-in-out;
+  border-color: #ff3300 !important;
+  color: #ff3300 !important;
+}
+
+@keyframes code-shake-anim {
+  0%, 100% { transform: translateX(0); }
+  20%, 60% { transform: translateX(-4px); }
+  40%, 80% { transform: translateX(4px); }
+}
+
+/* --- BACKROOMS HUD & STYLING --- */
+.backrooms-neon-flicker {
+  animation: backrooms-flicker-anim 4s infinite alternate;
+}
+
+@keyframes backrooms-flicker-anim {
+  0%, 19%, 21%, 23%, 25%, 39%, 41%, 45%, 47%, 49%, 70%, 100% { opacity: 0.95; }
+  20%, 24%, 40%, 46%, 48% { opacity: 0.82; }
+}
+
+/* Sanity HUD Label color override */
+.hud-label-sanity {
+  color: #e5c158 !important;
+}
+
+.hud-val-sanity {
+  color: #00ffff !important;
+}

@@ -1,0 +1,1802 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Halli Galli</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-primary: #121214;
+            --text-primary: #ffffff;
+            --color-strawberry: #ff4757;
+            --color-banana: #ffa502;
+            --color-lime: #2ed573;
+            --color-plum: #9b59b6;
+            --color-bell: #eccc68;
+            --font-game: 'Fredoka', sans-serif;
+        }
+
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: radial-gradient(circle at center, #1b263b 0%, #0d1b2a 100%);
+            font-family: var(--font-game);
+            color: var(--text-primary);
+            overflow: hidden;
+            user-select: none;
+        }
+
+        /* Ambient glowing backgrounds */
+        .glowing-bg {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .glow-orb {
+            position: absolute;
+            width: 400px;
+            height: 400px;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.15;
+        }
+
+        .glow-orb-1 {
+            background-color: var(--color-strawberry);
+            top: -100px;
+            left: -100px;
+        }
+
+        .glow-orb-2 {
+            background-color: var(--color-lime);
+            bottom: -100px;
+            right: -100px;
+        }
+
+        /* Menu Container */
+        .menu-container {
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2.2rem;
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 500px;
+            transition: opacity 0.5s ease, transform 0.5s ease;
+        }
+
+        .menu-container.fade-out {
+            opacity: 0;
+            transform: scale(0.92);
+            pointer-events: none;
+        }
+
+        .title-container {
+            animation: float 4s ease-in-out infinite;
+            position: relative;
+        }
+
+        .title {
+            font-size: 5.5rem;
+            font-weight: 700;
+            margin: 0;
+            letter-spacing: 1px;
+            background: linear-gradient(135deg, var(--color-strawberry) 0%, var(--color-banana) 50%, var(--color-lime) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.4));
+            position: relative;
+        }
+
+        .bell-icon {
+            position: absolute;
+            right: -80px;
+            top: 5px;
+            font-size: 4rem;
+            animation: ring 5s ease-in-out infinite;
+            transform-origin: top center;
+            filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.3));
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.6);
+            margin-top: 0.5rem;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        /* Difficulty Section */
+        .difficulty-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.8rem;
+            width: 100%;
+        }
+
+        .difficulty-label {
+            font-size: 0.85rem;
+            letter-spacing: 3px;
+            color: rgba(255, 255, 255, 0.4);
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .difficulty-carousel {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            justify-content: center;
+            width: 100%;
+        }
+
+        .difficulty-options {
+            display: flex;
+            gap: 0.5rem;
+            padding: 0.3rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .difficulty-pill {
+            position: absolute;
+            height: calc(100% - 0.6rem);
+            top: 0.3rem;
+            border-radius: 20px;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1.15);
+            z-index: 1;
+        }
+
+        .difficulty-pill.easy {
+            background: linear-gradient(135deg, #2ed573 0%, #7bed9f 100%);
+            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.35);
+        }
+
+        .difficulty-pill.medium {
+            background: linear-gradient(135deg, #ffa502 0%, #ffc048 100%);
+            box-shadow: 0 4px 15px rgba(255, 165, 2, 0.35);
+        }
+
+        .difficulty-pill.hard {
+            background: linear-gradient(135deg, #ff4757 0%, #ff6b81 100%);
+            box-shadow: 0 4px 15px rgba(255, 71, 87, 0.35);
+        }
+
+        .difficulty-option {
+            padding: 0.6rem 1.6rem;
+            font-size: 1.15rem;
+            font-weight: 600;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: color 0.3s ease;
+            color: rgba(255, 255, 255, 0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        .difficulty-option.active {
+            color: #0d0d0f;
+        }
+
+        .arrow-btn {
+            background: none;
+            border: none;
+            color: rgba(255, 255, 255, 0.4);
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            outline: none;
+        }
+
+        .arrow-btn:hover {
+            color: var(--text-primary);
+            transform: scale(1.25);
+        }
+
+        .arrow-btn:active {
+            transform: scale(0.85);
+        }
+
+        .difficulty-help {
+            font-size: 0.8rem;
+            color: rgba(255, 255, 255, 0.3);
+            margin-top: 0.2rem;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        /* Start Button */
+        .start-btn {
+            font-family: var(--font-game);
+            font-size: 2rem;
+            font-weight: 700;
+            padding: 1.2rem 4rem;
+            border: none;
+            border-radius: 50px;
+            background: linear-gradient(135deg, #2ed573 0%, #7bed9f 100%);
+            color: #0b2e14;
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(46, 213, 115, 0.4),
+                0 0 0 0px rgba(46, 213, 115, 0.2);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            outline: none;
+        }
+
+        .start-btn:hover {
+            transform: translateY(-6px) scale(1.04);
+            box-shadow: 0 18px 35px rgba(46, 213, 115, 0.6),
+                0 0 0 12px rgba(46, 213, 115, 0.15);
+        }
+
+        .start-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+            transition: 0.6s;
+        }
+
+        .start-btn:hover::before {
+            left: 100%;
+        }
+
+        .start-btn:active {
+            transform: translateY(-2px) scale(0.98);
+            box-shadow: 0 8px 20px rgba(46, 213, 115, 0.5);
+        }
+
+        /* Floating background elements */
+        .bg-fruits {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            z-index: 1;
+            transition: opacity 0.5s ease;
+        }
+
+        .bg-fruits.fade-out {
+            opacity: 0;
+        }
+
+        .bg-fruit {
+            position: absolute;
+            font-size: 3.5rem;
+            opacity: 0.12;
+            animation: drift 12s linear infinite;
+        }
+
+        .bg-fruit:nth-child(1) {
+            top: 15%;
+            left: 12%;
+            animation-duration: 14s;
+            font-size: 4rem;
+        }
+
+        .bg-fruit:nth-child(2) {
+            top: 65%;
+            left: 15%;
+            animation-duration: 18s;
+            font-size: 3.2rem;
+        }
+
+        .bg-fruit:nth-child(3) {
+            top: 20%;
+            right: 15%;
+            animation-duration: 16s;
+            font-size: 4.5rem;
+        }
+
+        .bg-fruit:nth-child(4) {
+            top: 70%;
+            right: 12%;
+            animation-duration: 13s;
+            font-size: 3.8rem;
+        }
+
+        /* Game Room Layout */
+        .game-room {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.5s ease;
+        }
+
+        .game-room.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .game-top-bar {
+            position: absolute;
+            top: 20px;
+            width: 90%;
+            max-width: 900px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 25;
+        }
+
+        .back-btn {
+            font-family: var(--font-game);
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 0.6rem 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.2s ease;
+            backdrop-filter: blur(10px);
+            outline: none;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 255, 255, 0.18);
+            color: #fff;
+            transform: translateX(-3px);
+        }
+
+        .game-status {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #fff;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 0.5rem 2rem;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            text-align: center;
+            max-width: 50%;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .difficulty-badge {
+            font-size: 0.85rem;
+            font-weight: 700;
+            padding: 0.5rem 1.2rem;
+            border-radius: 30px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .difficulty-badge.easy {
+            background: var(--color-lime);
+            color: #05200b;
+        }
+
+        .difficulty-badge.medium {
+            background: var(--color-banana);
+            color: #2a1a00;
+        }
+
+        .difficulty-badge.hard {
+            background: var(--color-strawberry);
+            color: #310005;
+        }
+
+        /* Game Board Area */
+        .table-container {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: min(650px, 90vw);
+            height: min(650px, 90vh);
+            margin-top: 2rem;
+        }
+
+        .circular-table {
+            width: min(410px, 58vw);
+            height: min(410px, 58vw);
+            background: radial-gradient(circle at center, #1b5e20 0%, #0c3311 100%);
+            border: 14px solid #3e2723;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6),
+                inset 0 10px 30px rgba(0, 0, 0, 0.6),
+                0 0 0 3px #5d4037;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        /* Player seat slots outside the table */
+        .player-seat {
+            position: absolute;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.4rem;
+            z-index: 15;
+            background: rgba(18, 18, 20, 0.7);
+            padding: 0.6rem 0.8rem;
+            border-radius: 18px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(15px);
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            width: 105px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .player-seat.active-turn {
+            border-color: #ffa502;
+            box-shadow: 0 0 20px rgba(255, 165, 2, 0.6);
+            transform: scale(1.06) !important;
+        }
+
+        .player-seat.eliminated {
+            opacity: 0.3;
+            border-color: rgba(255, 255, 255, 0.05);
+            pointer-events: none;
+            box-shadow: none;
+        }
+
+        .player-seat.eliminated .card-count {
+            color: var(--color-strawberry);
+            font-weight: 700;
+        }
+
+        /* Exact placement of seats */
+        .seat-bottom {
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .seat-top {
+            top: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .seat-left {
+            left: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .seat-right {
+            right: -5px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .seat-info {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .player-name {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: #fff;
+        }
+
+        .card-count {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.5);
+            font-weight: 500;
+        }
+
+        .player-deck-container {
+            margin-top: 0.2rem;
+        }
+
+        /* Discard Piles Container & Slots (Inside Table) */
+        .discard-piles-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        .discard-pile {
+            position: absolute;
+            width: 80px;
+            height: 120px;
+            border-radius: 12px;
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.04);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            box-sizing: border-box;
+        }
+
+        .discard-pile.has-card {
+            border-style: solid;
+            border-color: #ffffff;
+            background: #ffffff;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Radial Positioning of Discards around center bell */
+        .top-discard {
+            top: 13%;
+            left: 50%;
+            transform: translateX(-50%) rotate(180deg);
+        }
+
+        .bottom-discard {
+            bottom: 13%;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .left-discard {
+            left: 13%;
+            top: 50%;
+            transform: translateY(-50%) rotate(90deg);
+        }
+
+        .right-discard {
+            right: 13%;
+            top: 50%;
+            transform: translateY(-50%) rotate(-90deg);
+        }
+
+        /* Standard card styles */
+        .card {
+            width: 80px;
+            height: 120px;
+            border-radius: 12px;
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #ff4757 0%, #b32a35 100%);
+            border: 3px solid white;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3), inset 0 0 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .card-back::after {
+            content: '🔔';
+            font-size: 2rem;
+            opacity: 0.8;
+        }
+
+        .card-back:hover {
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4), inset 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .card-back:active {
+            transform: translateY(-1px) scale(0.98);
+        }
+
+        .card-empty {
+            border: 2px dashed rgba(255, 255, 255, 0.2);
+            background: rgba(255, 255, 255, 0.02);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: rgba(255, 255, 255, 0.2);
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .deck-highlight {
+            box-shadow: 0 0 0 3px #ffa502, 0 0 20px #ffa502;
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+
+        @keyframes pulseGlow {
+            0% {
+                box-shadow: 0 0 0 2px #ffa502, 0 0 10px rgba(255, 165, 2, 0.4);
+            }
+
+            100% {
+                box-shadow: 0 0 0 4px #ffa502, 0 0 22px rgba(255, 165, 2, 0.9);
+            }
+        }
+
+        /* Card Face Emoji Grid */
+        .card-faceup {
+            width: 100%;
+            height: 100%;
+            background: white;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .card-face {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            width: 54px;
+            height: 72px;
+            box-sizing: border-box;
+            align-items: center;
+            justify-items: center;
+        }
+
+        .fruit-emoji {
+            line-height: 1;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+            user-select: none;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Bell Styles */
+        .bell-container {
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 15;
+        }
+
+        .bell {
+            width: 90px;
+            height: 90px;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.08s ease;
+        }
+
+        .bell-plunger {
+            position: absolute;
+            top: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 20px;
+            height: 12px;
+            background: linear-gradient(to right, #cfd8dc, #90a4ae);
+            border-radius: 4px;
+            border: 1px solid #78909c;
+            z-index: 1;
+            transition: transform 0.08s ease;
+        }
+
+        .bell-dome {
+            width: 90px;
+            height: 90px;
+            background: radial-gradient(circle at 30% 30%, #f1c40f 0%, #d4ac0d 60%, #9a7d0a 100%);
+            border-radius: 50%;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.4),
+                inset 0 -10px 20px rgba(0, 0, 0, 0.3),
+                inset 0 10px 20px rgba(255, 255, 255, 0.4);
+            border: 2px solid #b7950b;
+            position: relative;
+            z-index: 2;
+        }
+
+        .bell.pressed .bell-plunger {
+            transform: translate(-50%, 6px);
+        }
+
+        .bell.pressed {
+            transform: scale(0.94);
+        }
+
+        .bell-wave {
+            position: absolute;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+            border: 3px solid var(--color-banana);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .bell-wave.ring-active {
+            animation: ringWave 0.8s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        .bell-help {
+            position: absolute;
+            bottom: -32px;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.4);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            font-weight: 700;
+            pointer-events: none;
+            white-space: nowrap;
+        }
+
+        @keyframes ringWave {
+            0% {
+                transform: scale(1);
+                opacity: 0.8;
+            }
+
+            100% {
+                transform: scale(2.2);
+                opacity: 0;
+            }
+        }
+
+        /* Banner Notification Overlay */
+        .banner-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            z-index: 30;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .banner-overlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .banner-content {
+            background: linear-gradient(135deg, #1e1e24 0%, #0d0d0f 100%);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 2.2rem 3.5rem;
+            border-radius: 24px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+            transform: scale(0.85);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 85%;
+        }
+
+        .banner-overlay.active .banner-content {
+            transform: scale(1);
+        }
+
+        .banner-title {
+            font-size: 2.2rem;
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            background: linear-gradient(135deg, #ffa502 0%, #ff4757 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .banner-message {
+            font-size: 1.2rem;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 1.6rem;
+            line-height: 1.4;
+        }
+
+        .banner-btn {
+            font-family: var(--font-game);
+            background: linear-gradient(135deg, #2ed573 0%, #7bed9f 100%);
+            color: #0b2e14;
+            border: none;
+            padding: 0.8rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 8px 20px rgba(46, 213, 115, 0.3);
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .banner-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(46, 213, 115, 0.5);
+        }
+
+        .banner-btn-secondary {
+            font-family: var(--font-game);
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 0.8rem 2.5rem;
+            font-size: 1.1rem;
+            font-weight: 700;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            outline: none;
+        }
+
+        .banner-btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-3px);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .banner-btn-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+            align-items: center;
+            margin-top: 1.6rem;
+            flex-wrap: wrap;
+        }
+
+        /* Animations */
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0);
+            }
+
+            50% {
+                transform: translateY(-15px);
+            }
+        }
+
+        @keyframes ring {
+
+            0%,
+            85%,
+            100% {
+                transform: rotate(0);
+            }
+
+            88% {
+                transform: rotate(18deg);
+            }
+
+            91% {
+                transform: rotate(-14deg);
+            }
+
+            94% {
+                transform: rotate(10deg);
+            }
+
+            97% {
+                transform: rotate(-6deg);
+            }
+        }
+
+        @keyframes drift {
+            0% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-25px) rotate(180deg);
+            }
+
+            100% {
+                transform: translateY(0) rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="glowing-bg">
+        <div class="glow-orb glow-orb-1"></div>
+        <div class="glow-orb glow-orb-2"></div>
+    </div>
+
+    <div class="bg-fruits">
+        <div class="bg-fruit">🍌</div>
+        <div class="bg-fruit">🍓</div>
+        <div class="bg-fruit">🍋</div>
+        <div class="bg-fruit">🍇</div>
+    </div>
+
+    <!-- MAIN MENU VIEW -->
+    <div class="menu-container" id="main-menu-view">
+        <div class="title-container">
+            <h1 class="title">Halli Galli</h1>
+            <span class="bell-icon">🔔</span>
+            <div class="subtitle">The Fruit Salad Bell Game</div>
+        </div>
+
+        <div class="difficulty-section">
+            <div class="difficulty-label">Select Difficulty</div>
+            <div class="difficulty-carousel">
+                <button class="arrow-btn" id="prev-diff-btn" aria-label="Previous difficulty">◀</button>
+                <div class="difficulty-options" id="difficulty-options">
+                    <div class="difficulty-pill" id="difficulty-pill"></div>
+                    <div class="difficulty-option active" data-difficulty="easy">Easy</div>
+                    <div class="difficulty-option" data-difficulty="medium">Medium</div>
+                    <div class="difficulty-option" data-difficulty="hard">Hard</div>
+                </div>
+                <button class="arrow-btn" id="next-diff-btn" aria-label="Next difficulty">▶</button>
+            </div>
+            <div class="difficulty-help">Use Left/Right or Up/Down arrows to change</div>
+        </div>
+
+        <button class="start-btn">START GAME</button>
+    </div>
+
+    <!-- GAME ROOM VIEW -->
+    <div class="game-room" id="game-room" style="display: none;">
+        <div class="game-top-bar">
+            <button class="back-btn" id="back-btn">◀ MENU</button>
+            <div class="game-status" id="game-status">Waiting to start...</div>
+            <div class="difficulty-badge" id="difficulty-badge">MEDIUM</div>
+        </div>
+
+        <div class="table-container">
+            <div class="circular-table">
+                <!-- Central Bell -->
+                <div class="bell-container" id="bell-container">
+                    <div class="bell-wave" id="bell-wave"></div>
+                    <div class="bell" id="bell">
+                        <div class="bell-plunger"></div>
+                        <div class="bell-dome"></div>
+                        <div class="bell-help">Space or Click</div>
+                    </div>
+                </div>
+
+                <!-- Discard Piles (inside table) -->
+                <div class="discard-piles-container">
+                    <div class="discard-pile top-discard" id="p3-discard"></div>
+                    <div class="discard-pile bottom-discard" id="p1-discard"></div>
+                    <div class="discard-pile left-discard" id="p2-discard"></div>
+                    <div class="discard-pile right-discard" id="p4-discard"></div>
+                </div>
+            </div>
+
+            <!-- Player Seats (outside table) -->
+            <div class="player-seat seat-bottom" id="seat-p1">
+                <div class="seat-info">
+                    <span class="player-name">You</span>
+                    <span class="card-count" id="p1-count">14 cards</span>
+                </div>
+                <div class="player-deck-container">
+                    <div class="card card-back" id="p1-deck"></div>
+                </div>
+            </div>
+
+            <div class="player-seat seat-left" id="seat-p2">
+                <div class="seat-info">
+                    <span class="player-name">Chester</span>
+                    <span class="card-count" id="p2-count">14 cards</span>
+                </div>
+                <div class="player-deck-container">
+                    <div class="card card-back" id="p2-deck"></div>
+                </div>
+            </div>
+
+            <div class="player-seat seat-top" id="seat-p3">
+                <div class="seat-info">
+                    <span class="player-name">Daisy</span>
+                    <span class="card-count" id="p3-count">14 cards</span>
+                </div>
+                <div class="player-deck-container">
+                    <div class="card card-back" id="p3-deck"></div>
+                </div>
+            </div>
+
+            <div class="player-seat seat-right" id="seat-p4">
+                <div class="seat-info">
+                    <span class="player-name">Barney</span>
+                    <span class="card-count" id="p4-count">14 cards</span>
+                </div>
+                <div class="player-deck-container">
+                    <div class="card card-back" id="p4-deck"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner-overlay" id="banner-overlay">
+            <div class="banner-content" id="banner-content">
+                <!-- Dynamic text populated by JS -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* DIFFICULTY SELECTOR LOGIC (Main Menu) */
+        const difficulties = ['easy', 'medium', 'hard'];
+        let currentDiffIndex = 0;
+
+        const options = document.querySelectorAll('.difficulty-option');
+        const pill = document.getElementById('difficulty-pill');
+        const prevBtn = document.getElementById('prev-diff-btn');
+        const nextBtn = document.getElementById('next-diff-btn');
+
+        function updateDifficultyUI() {
+            if (!pill) return;
+            options.forEach((opt, idx) => {
+                if (idx === currentDiffIndex) {
+                    opt.classList.add('active');
+                    pill.style.width = `${opt.offsetWidth}px`;
+                    pill.style.left = `${opt.offsetLeft}px`;
+                    pill.className = `difficulty-pill ${difficulties[currentDiffIndex]}`;
+                } else {
+                    opt.classList.remove('active');
+                }
+            });
+        }
+
+        function setDifficultyIndex(index) {
+            currentDiffIndex = (index + difficulties.length) % difficulties.length;
+            updateDifficultyUI();
+        }
+
+        function triggerPressFeedback(btn) {
+            if (!btn) return;
+            btn.style.transform = 'scale(0.8)';
+            setTimeout(() => {
+                btn.style.transform = '';
+            }, 100);
+        }
+
+        options.forEach((opt, idx) => {
+            opt.addEventListener('click', () => {
+                setDifficultyIndex(idx);
+            });
+        });
+
+        prevBtn.addEventListener('click', () => {
+            setDifficultyIndex(currentDiffIndex - 1);
+            triggerPressFeedback(prevBtn);
+        });
+
+        nextBtn.addEventListener('click', () => {
+            setDifficultyIndex(currentDiffIndex + 1);
+            triggerPressFeedback(nextBtn);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            const menu = document.getElementById('main-menu-view');
+            // Only switch difficulty if main menu is currently active
+            if (menu && !menu.classList.contains('fade-out')) {
+                if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+                    setDifficultyIndex(currentDiffIndex - 1);
+                    triggerPressFeedback(prevBtn);
+                    e.preventDefault();
+                } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+                    setDifficultyIndex(currentDiffIndex + 1);
+                    triggerPressFeedback(nextBtn);
+                    e.preventDefault();
+                }
+            }
+        });
+
+        window.addEventListener('load', () => {
+            setTimeout(updateDifficultyUI, 50);
+        });
+        window.addEventListener('resize', updateDifficultyUI);
+
+
+        /* GAME SETUP & GAMEPLAY LOGIC */
+        let players = [
+            { name: 'You', deckCount: 14, discardCount: 0, activeCard: null, elementId: 'seat-p1', countId: 'p1-count', discardId: 'p1-discard', deckElementId: 'p1-deck' },
+            { name: 'Chester', deckCount: 14, discardCount: 0, activeCard: null, elementId: 'seat-p2', countId: 'p2-count', discardId: 'p2-discard', deckElementId: 'p2-deck' },
+            { name: 'Daisy', deckCount: 14, discardCount: 0, activeCard: null, elementId: 'seat-p3', countId: 'p3-count', discardId: 'p3-discard', deckElementId: 'p3-deck' },
+            { name: 'Barney', deckCount: 14, discardCount: 0, activeCard: null, elementId: 'seat-p4', countId: 'p4-count', discardId: 'p4-discard', deckElementId: 'p4-deck' }
+        ];
+
+        let activePlayerIndex = 0; // index of who flips next
+        let gameActive = false;
+        let botBuzzTimeoutId = null;
+        let botFlipTimeoutId = null;
+        let roundResolveTimeoutId = null;
+        let bannerTimeoutId = null;
+        let lastCorrectTimestamp = 0;
+
+        const gridPositions = {
+            1: [[2, 2]],
+            2: [[1, 1], [3, 3]],
+            3: [[1, 1], [2, 2], [3, 3]],
+            4: [[1, 1], [1, 3], [3, 1], [3, 3]],
+            5: [[1, 1], [1, 3], [2, 2], [3, 1], [3, 3]]
+        };
+
+        // Synthesize bell ding sound using Web Audio API
+        function playBellSound() {
+            try {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                if (!AudioContext) return;
+                const ctx = new AudioContext();
+                const now = ctx.currentTime;
+
+                // Base oscillator
+                const osc1 = ctx.createOscillator();
+                const gain1 = ctx.createGain();
+                osc1.type = 'sine';
+                osc1.frequency.setValueAtTime(880, now); // High pitch A5
+
+                // Harmonics
+                const osc2 = ctx.createOscillator();
+                const gain2 = ctx.createGain();
+                osc2.type = 'sine';
+                osc2.frequency.setValueAtTime(1200, now);
+
+                const osc3 = ctx.createOscillator();
+                const gain3 = ctx.createGain();
+                osc3.type = 'sine';
+                osc3.frequency.setValueAtTime(1760, now);
+
+                gain1.gain.setValueAtTime(0.4, now);
+                gain1.gain.exponentialRampToValueAtTime(0.001, now + 1.2);
+
+                gain2.gain.setValueAtTime(0.2, now);
+                gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.8);
+
+                gain3.gain.setValueAtTime(0.15, now);
+                gain3.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+                osc1.connect(gain1);
+                osc2.connect(gain2);
+                osc3.connect(gain3);
+
+                gain1.connect(ctx.destination);
+                gain2.connect(ctx.destination);
+                gain3.connect(ctx.destination);
+
+                osc1.start(now);
+                osc2.start(now);
+                osc3.start(now);
+
+                osc1.stop(now + 1.3);
+                osc2.stop(now + 0.9);
+                osc3.stop(now + 0.6);
+            } catch (e) {
+                console.log("Audio API failed or blocked: ", e);
+            }
+        }
+
+        function renderCardHTML(fruit, count) {
+            const positions = gridPositions[count] || [];
+            let emojisHTML = '';
+            
+            let fontSize = '14px';
+            if (count === 1) {
+                fontSize = '28px';
+            } else if (count === 2) {
+                fontSize = '18px';
+            }
+
+            positions.forEach(([r, c]) => {
+                emojisHTML += `<span class="fruit-emoji" style="grid-row: ${r}; grid-column: ${c}; font-size: ${fontSize};">${fruit}</span>`;
+            });
+
+            return `
+                <div class="card card-faceup">
+                    <div class="card-face">
+                        ${emojisHTML}
+                    </div>
+                </div>
+            `;
+        }
+
+        function updatePlayerCountUI() {
+            players.forEach(p => {
+                const countEl = document.getElementById(p.countId);
+                const seat = document.getElementById(p.elementId);
+                if (p.deckCount === 0 && p.discardCount === 0 && p.activeCard === null) {
+                    countEl.innerText = "ELIMINATED";
+                    seat.classList.add('eliminated');
+                } else {
+                    countEl.innerText = `${p.deckCount} cards`;
+                    seat.classList.remove('eliminated');
+                }
+            });
+        }
+
+        function updateTurnHighlight() {
+            players.forEach((p, idx) => {
+                const seat = document.getElementById(p.elementId);
+                const deck = document.getElementById(p.deckElementId);
+
+                if (idx === activePlayerIndex && gameActive) {
+                    seat.classList.add('active-turn');
+                    if (idx === 0) {
+                        deck.classList.add('deck-highlight');
+                    } else {
+                        deck.classList.remove('deck-highlight');
+                    }
+                } else {
+                    seat.classList.remove('active-turn');
+                    deck.classList.remove('deck-highlight');
+                }
+            });
+        }
+
+        function updateGameStatus(msg) {
+            const status = document.getElementById('game-status');
+            if (status) status.innerText = msg;
+        }
+
+        const bannerOverlay = document.getElementById('banner-overlay');
+        const bannerContent = document.getElementById('banner-content');
+
+        function showBanner(title, message, callback) {
+            gameActive = false;
+            if (botBuzzTimeoutId) clearTimeout(botBuzzTimeoutId);
+            if (botFlipTimeoutId) clearTimeout(botFlipTimeoutId);
+            if (roundResolveTimeoutId) clearTimeout(roundResolveTimeoutId);
+            if (bannerTimeoutId) clearTimeout(bannerTimeoutId);
+
+            botBuzzTimeoutId = null;
+            botFlipTimeoutId = null;
+            roundResolveTimeoutId = null;
+            bannerTimeoutId = null;
+
+            bannerContent.innerHTML = `
+                <div class="banner-title">${title}</div>
+                <div class="banner-message">${message}</div>
+                <button class="banner-btn" id="banner-close-btn">CONTINUE</button>
+            `;
+            bannerOverlay.classList.add('active');
+
+            const closeBtn = document.getElementById('banner-close-btn');
+
+            function close() {
+                if (bannerTimeoutId) {
+                    clearTimeout(bannerTimeoutId);
+                    bannerTimeoutId = null;
+                }
+                bannerOverlay.classList.remove('active');
+                if (callback) callback();
+            }
+
+            bannerTimeoutId = setTimeout(close, 2500); // 2.5s auto close
+            closeBtn.addEventListener('click', close);
+        }
+
+        function checkFiveOnTable() {
+            const sums = { '🍓': 0, '🍌': 0, '🍋': 0, '🍇': 0 };
+            players.forEach(p => {
+                if (p.activeCard) {
+                    sums[p.activeCard.fruit] += p.activeCard.count;
+                }
+            });
+            for (const fruit in sums) {
+                if (sums[fruit] === 5) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function checkBuzzerState() {
+            const isCorrect = checkFiveOnTable();
+
+            if (isCorrect) {
+                lastCorrectTimestamp = Date.now();
+            }
+
+            // Fresh action resets bot focus window
+            if (botBuzzTimeoutId) {
+                clearTimeout(botBuzzTimeoutId);
+                botBuzzTimeoutId = null;
+            }
+
+            if (isCorrect && gameActive) {
+                let reactionTime;
+                if (currentDiffIndex === 0) { // Easy
+                    reactionTime = 2000 + Math.random() * 1200;
+                } else if (currentDiffIndex === 1) { // Medium
+                    reactionTime = 1350 + Math.random() * 850;
+                } else { // Hard
+                    reactionTime = 750 + Math.random() * 550;
+                }
+                botBuzzTimeoutId = setTimeout(() => {
+                    botBuzz();
+                }, reactionTime);
+            }
+        }
+
+        // Animate flying cards to winner's seat before resetting state
+        function animateCardCollection(winnerIdx) {
+            const winnerSeat = document.getElementById(players[winnerIdx].elementId);
+
+            players.forEach(p => {
+                const discard = document.getElementById(p.discardId);
+                const cardFace = discard.querySelector('.card-faceup');
+                if (cardFace) {
+                    cardFace.style.transition = 'all 0.5s cubic-bezier(0.25, 1, 0.5, 1)';
+
+                    const discRect = discard.getBoundingClientRect();
+                    const seatRect = winnerSeat.getBoundingClientRect();
+                    const dx = seatRect.left + seatRect.width / 2 - (discRect.left + discRect.width / 2);
+                    const dy = seatRect.top + seatRect.height / 2 - (discRect.top + discRect.height / 2);
+
+                    cardFace.style.transform = `translate(${dx}px, ${dy}px) scale(0.1) rotate(60deg)`;
+                    cardFace.style.opacity = '0';
+                }
+            });
+        }
+
+        function triggerBuzzerWin(winnerIdx) {
+            gameActive = false;
+            if (botBuzzTimeoutId) clearTimeout(botBuzzTimeoutId);
+            if (botFlipTimeoutId) clearTimeout(botFlipTimeoutId);
+            if (roundResolveTimeoutId) clearTimeout(roundResolveTimeoutId);
+            if (bannerTimeoutId) clearTimeout(bannerTimeoutId);
+
+            botBuzzTimeoutId = null;
+            botFlipTimeoutId = null;
+            roundResolveTimeoutId = null;
+            bannerTimeoutId = null;
+
+            let totalCollected = 0;
+            players.forEach(p => {
+                totalCollected += p.discardCount;
+            });
+
+            animateCardCollection(winnerIdx);
+
+            roundResolveTimeoutId = setTimeout(() => {
+                players[winnerIdx].deckCount += totalCollected;
+
+                players.forEach(p => {
+                    p.discardCount = 0;
+                    p.activeCard = null;
+                });
+
+                updatePlayerCountUI();
+
+                const winner = players[winnerIdx];
+                const isUser = winnerIdx === 0;
+                const title = isUser ? "🔔 CORRECT! 🔔" : "🔔 BUZZ! 🔔";
+                const message = isUser
+                    ? `You buzzed first and won all cards on the table (+${totalCollected} cards)!`
+                    : `${winner.name} buzzed first and won all cards on the table (+${totalCollected} cards)!`;
+
+                showBanner(title, message, () => {
+                    activePlayerIndex = winnerIdx;
+                    resumeGameAfterRound(true);
+                });
+                roundResolveTimeoutId = null;
+            }, 520);
+        }
+
+        function triggerBuzzerPenalty() {
+            gameActive = false;
+            if (botBuzzTimeoutId) clearTimeout(botBuzzTimeoutId);
+            if (botFlipTimeoutId) clearTimeout(botFlipTimeoutId);
+            if (roundResolveTimeoutId) clearTimeout(roundResolveTimeoutId);
+            if (bannerTimeoutId) clearTimeout(bannerTimeoutId);
+
+            botBuzzTimeoutId = null;
+            botFlipTimeoutId = null;
+            roundResolveTimeoutId = null;
+            bannerTimeoutId = null;
+
+            // Calculate current sums for the penalty message
+            const sums = { '🍓': 0, '🍌': 0, '🍋': 0, '🍇': 0 };
+            players.forEach(p => {
+                if (p.activeCard) {
+                    sums[p.activeCard.fruit] += p.activeCard.count;
+                }
+            });
+            const sumsStr = Object.entries(sums).map(([fruit, count]) => `${fruit}: ${count}`).join(' | ');
+
+            // Pay 1 card to each active opponent
+            let activeOpponents = players.slice(1).filter(p => (p.deckCount + p.discardCount) > 0);
+            let penaltyPayed = 0;
+
+            activeOpponents.forEach(p => {
+                if (players[0].deckCount > 0) {
+                    players[0].deckCount--;
+                    p.deckCount++;
+                    penaltyPayed++;
+                }
+            });
+
+            updatePlayerCountUI();
+
+            showBanner(
+                "❌ INCORRECT!",
+                `No fruit sums to exactly 5.<br><small style="color: rgba(255, 255, 255, 0.45); letter-spacing: 0.5px; font-size: 0.85rem; display: block; margin-top: 5px;">Board State: ${sumsStr}</small><br>Penalty: Gave ${penaltyPayed} card(s) to opponents.`,
+                () => {
+                    resumeGameAfterRound(false);
+                }
+            );
+        }
+
+        function botBuzz() {
+            if (!gameActive) return;
+            // CRITICAL: Prevent bots from buzzing if the 5 is no longer on the table
+            if (!checkFiveOnTable()) return;
+
+            // Choose one of the non-eliminated bots
+            let activeBots = players.slice(1).filter(p => (p.deckCount + p.discardCount) > 0);
+            if (activeBots.length === 0) return;
+
+            const winnerBot = activeBots[Math.floor(Math.random() * activeBots.length)];
+            const winnerIdx = players.indexOf(winnerBot);
+
+            // Ring buzzer
+            playBellSound();
+            const bellEl = document.getElementById('bell');
+            bellEl.classList.add('pressed');
+            setTimeout(() => bellEl.classList.remove('pressed'), 100);
+
+            const wave = document.getElementById('bell-wave');
+            wave.classList.remove('ring-active');
+            wave.offsetHeight; // force reflow
+            wave.classList.add('ring-active');
+
+            triggerBuzzerWin(winnerIdx);
+        }
+
+        function userBuzz() {
+            if (!gameActive) return;
+
+            playBellSound();
+            const bellEl = document.getElementById('bell');
+            bellEl.classList.add('pressed');
+            setTimeout(() => bellEl.classList.remove('pressed'), 100);
+
+            const wave = document.getElementById('bell-wave');
+            wave.classList.remove('ring-active');
+            wave.offsetHeight;
+            wave.classList.add('ring-active');
+
+            const isCorrect = checkFiveOnTable() || (Date.now() - lastCorrectTimestamp < 350);
+            if (isCorrect) {
+                triggerBuzzerWin(0);
+            } else {
+                triggerBuzzerPenalty();
+            }
+        }
+
+        function flipCard(idx) {
+            const player = players[idx];
+            if (player.deckCount <= 0) return;
+
+            player.deckCount--;
+            player.discardCount++;
+
+            const fruits = ['🍓', '🍌', '🍋', '🍇'];
+            const fruit = fruits[Math.floor(Math.random() * fruits.length)];
+            const count = Math.floor(Math.random() * 5) + 1;
+
+            player.activeCard = { fruit, count };
+
+            // Render card face
+            const discard = document.getElementById(player.discardId);
+            discard.innerHTML = renderCardHTML(fruit, count);
+            discard.classList.add('has-card');
+
+            // Pop flip animation
+            const cardEl = discard.querySelector('.card-faceup');
+            cardEl.style.transform = 'scale(0.8) rotateY(-180deg)';
+            cardEl.style.opacity = '0';
+            cardEl.offsetHeight; // reflow
+            cardEl.style.transition = 'all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25)';
+            cardEl.style.transform = 'scale(1) rotateY(0deg)';
+            cardEl.style.opacity = '1';
+
+            updatePlayerCountUI();
+
+            // Reset deck graphic if empty
+            const deck = document.getElementById(player.deckElementId);
+            if (player.deckCount === 0) {
+                deck.className = 'card card-empty';
+                deck.innerText = 'Empty';
+            } else {
+                deck.className = 'card card-back';
+                deck.innerText = '';
+            }
+
+            checkBuzzerState();
+            nextTurn();
+        }
+
+        function nextTurn() {
+            if (checkGameOver()) return;
+
+            // Cycle clock-wise to next player with cards remaining
+            let nextIdx = activePlayerIndex;
+            let attempts = 0;
+            do {
+                nextIdx = (nextIdx + 1) % 4;
+                attempts++;
+            } while (players[nextIdx].deckCount === 0 && attempts < 4);
+
+            if (attempts >= 4) return;
+
+            activePlayerIndex = nextIdx;
+            updateTurnHighlight();
+
+            if (activePlayerIndex !== 0) {
+                updateGameStatus(`${players[activePlayerIndex].name}'s Turn...`);
+                scheduleBotFlip();
+            } else {
+                updateGameStatus("Your Turn! Click your deck to flip a card.");
+            }
+        }
+
+        function scheduleBotFlip() {
+            if (botFlipTimeoutId) clearTimeout(botFlipTimeoutId);
+            if (activePlayerIndex === 0 || !gameActive) return;
+
+            // If there's exactly 5 of a fruit on the table, pause flips and wait for the buzzer
+            if (checkFiveOnTable()) return;
+
+            botFlipTimeoutId = setTimeout(() => {
+                if (checkFiveOnTable()) return;
+                flipCard(activePlayerIndex);
+            }, 1200 + Math.random() * 600);
+        }
+
+        function checkGameOver() {
+            const userTotal = players[0].deckCount + players[0].discardCount;
+            if (userTotal === 0) {
+                endGame(false);
+                return true;
+            }
+
+            let botsTotal = 0;
+            for (let i = 1; i < 4; i++) {
+                botsTotal += players[i].deckCount + players[i].discardCount;
+            }
+            if (botsTotal === 0) {
+                endGame(true);
+                return true;
+            }
+            return false;
+        }
+
+        function endGame(userWon) {
+            gameActive = false;
+            if (botBuzzTimeoutId) clearTimeout(botBuzzTimeoutId);
+            if (botFlipTimeoutId) clearTimeout(botFlipTimeoutId);
+            if (roundResolveTimeoutId) clearTimeout(roundResolveTimeoutId);
+            if (bannerTimeoutId) clearTimeout(bannerTimeoutId);
+
+            botBuzzTimeoutId = null;
+            botFlipTimeoutId = null;
+            roundResolveTimeoutId = null;
+            bannerTimeoutId = null;
+
+            const title = userWon ? "🏆 VICTORY!" : "💀 DEFEAT";
+            const msg = userWon
+                ? "Congratulations! You collected all cards and won the game!"
+                : "You ran out of cards. Better luck next time!";
+
+            bannerContent.innerHTML = `
+                <div class="banner-title">${title}</div>
+                <div class="banner-message">${msg}</div>
+                <div class="banner-btn-container">
+                    <button class="banner-btn" id="banner-restart-btn">PLAY AGAIN</button>
+                    <button class="banner-btn-secondary" id="banner-exit-btn">EXIT TO MENU</button>
+                </div>
+            `;
+            bannerOverlay.classList.add('active');
+
+            const restartBtn = document.getElementById('banner-restart-btn');
+            restartBtn.addEventListener('click', () => {
+                bannerOverlay.classList.remove('active');
+                resetGame();
+            });
+
+            const exitBtn = document.getElementById('banner-exit-btn');
+            exitBtn.addEventListener('click', () => {
+                bannerOverlay.classList.remove('active');
+                exitToMenu();
+            });
+        }
+
+        function resumeGameAfterRound(clearTable) {
+            players.forEach(p => {
+                const deck = document.getElementById(p.deckElementId);
+                if (p.deckCount === 0) {
+                    deck.className = 'card card-empty';
+                    deck.innerText = 'Empty';
+                } else {
+                    deck.className = 'card card-back';
+                    deck.innerText = '';
+                }
+
+                const seat = document.getElementById(p.elementId);
+                if (p.deckCount === 0 && p.discardCount === 0) {
+                    seat.classList.add('eliminated');
+                } else {
+                    seat.classList.remove('eliminated');
+                }
+
+                if (clearTable) {
+                    const disc = document.getElementById(p.discardId);
+                    disc.innerHTML = '';
+                    disc.classList.remove('has-card');
+                }
+            });
+
+            if (checkGameOver()) return;
+
+            gameActive = true;
+            updateTurnHighlight();
+
+            if (!clearTable) {
+                checkBuzzerState(); // Recheck buzzer state since cards remained on the table
+            }
+
+            if (activePlayerIndex !== 0) {
+                updateGameStatus(`${players[activePlayerIndex].name}'s Turn...`);
+                scheduleBotFlip();
+            } else {
+                updateGameStatus("Your Turn! Click your deck to flip a card.");
+            }
+        }
+
+        function resetGame() {
+            players.forEach(p => {
+                p.deckCount = 14;
+                p.discardCount = 0;
+                p.activeCard = null;
+                const disc = document.getElementById(p.discardId);
+                disc.innerHTML = '';
+                disc.classList.remove('has-card');
+                const deck = document.getElementById(p.deckElementId);
+                deck.className = 'card card-back';
+                deck.innerText = '';
+            });
+
+            activePlayerIndex = 0;
+            gameActive = true;
+
+            if (botBuzzTimeoutId) clearTimeout(botBuzzTimeoutId);
+            if (botFlipTimeoutId) clearTimeout(botFlipTimeoutId);
+            if (roundResolveTimeoutId) clearTimeout(roundResolveTimeoutId);
+            if (bannerTimeoutId) clearTimeout(bannerTimeoutId);
+
+            botBuzzTimeoutId = null;
+            botFlipTimeoutId = null;
+            roundResolveTimeoutId = null;
+            bannerTimeoutId = null;
+            lastCorrectTimestamp = 0;
+
+            // Update difficulty badge color & label
+            const badge = document.getElementById('difficulty-badge');
+            badge.innerText = difficulties[currentDiffIndex];
+            badge.className = `difficulty-badge ${difficulties[currentDiffIndex]}`;
+
+            updatePlayerCountUI();
+            updateTurnHighlight();
+            updateGameStatus("Your Turn! Click your deck to flip a card.");
+        }
+
+        function startGame() {
+            const menu = document.getElementById('main-menu-view');
+            const room = document.getElementById('game-room');
+            const bgFruits = document.querySelector('.bg-fruits');
+
+            menu.classList.add('fade-out');
+            if (bgFruits) bgFruits.classList.add('fade-out');
+
+            setTimeout(() => {
+                menu.style.display = 'none';
+                room.style.display = 'flex';
+                room.offsetHeight; // reflow
+                room.classList.add('active');
+                resetGame();
+            }, 500);
+        }
+
+        // Return to main menu with proper cleanup
+        function exitToMenu() {
+            gameActive = false;
+            if (botBuzzTimeoutId) clearTimeout(botBuzzTimeoutId);
+            if (botFlipTimeoutId) clearTimeout(botFlipTimeoutId);
+            if (roundResolveTimeoutId) clearTimeout(roundResolveTimeoutId);
+            if (bannerTimeoutId) clearTimeout(bannerTimeoutId);
+
+            botBuzzTimeoutId = null;
+            botFlipTimeoutId = null;
+            roundResolveTimeoutId = null;
+            bannerTimeoutId = null;
+            lastCorrectTimestamp = 0;
+
+            const menu = document.getElementById('main-menu-view');
+            const room = document.getElementById('game-room');
+            const bgFruits = document.querySelector('.bg-fruits');
+
+            room.classList.remove('active');
+            document.getElementById('banner-overlay').classList.remove('active');
+
+            setTimeout(() => {
+                room.style.display = 'none';
+                menu.style.display = 'flex';
+                menu.offsetHeight; // reflow
+                menu.classList.remove('fade-out');
+                if (bgFruits) bgFruits.classList.remove('fade-out');
+                updateDifficultyUI();
+            }, 500);
+        }
+
+        // Click deck event
+        document.getElementById('p1-deck').addEventListener('click', () => {
+            if (!gameActive) return;
+            if (activePlayerIndex !== 0) return;
+            flipCard(0);
+        });
+
+        // Click buzzer event
+        document.getElementById('bell').addEventListener('click', () => {
+            userBuzz();
+        });
+
+        // Spacebar buzzer trigger
+        document.addEventListener('keydown', (e) => {
+            if (e.code === 'Space') {
+                if (gameActive) {
+                    userBuzz();
+                    e.preventDefault();
+                }
+            }
+        });
+
+        // Start Game button click event
+        document.querySelector('.start-btn').addEventListener('click', startGame);
+
+        // Exit back to menu button
+        document.getElementById('back-btn').addEventListener('click', exitToMenu);
+    </script>
+</body>
+
+</html>
